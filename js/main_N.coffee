@@ -38,6 +38,7 @@ $(document).ready -> # Wait for page to lead to run JavaScript
 #        console.log envP
 #        console.log envP.eval new Token 'y'
 #        console.log envP.eval new Token 'x'
+#        console.log envP.eval new Token 'z'
         return
 
     # Function Calls * Called when page loads
