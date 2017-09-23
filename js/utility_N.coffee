@@ -1,5 +1,5 @@
 ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    * File: utility.js
+    * File: utility_N.coffee
     * ----------------
     * This file contains what would be "static" utility functions
     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
@@ -153,7 +153,7 @@
             return false
     return true
 
-String.prototype.splitWithIndex = (delim) ->
+String::splitWithIndex = (delim) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * string.splitWithIndex (String delim)
         * ----------------

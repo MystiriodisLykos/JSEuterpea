@@ -6,6 +6,7 @@ intruments["acoustic_guitar_nylon"] = 24;
 intruments["acoustic_guitar_steel"] = 25;
 intruments["alto_sax"] = 65;
 intruments["synth_drum"] = 118;
+intruments["flute"] = 73;
 
 console.log("Loading Music");
 
@@ -14,6 +15,7 @@ function Note(instrument, pitch, velocity, duration){
     this.pitch = pitch;
     this.velocity = velocity;
     this.duration = duration;
+    // console.log(this.instrumentNum)
 }
 Note.prototype.play = function (startTime) {
     MIDI.programChange(0, this.instrumentNum);
@@ -23,7 +25,7 @@ Note.prototype.play = function (startTime) {
     t = startTime + this.duration;
     return t;
 }
-Note.prototype.newInst = function (instrumentMod){
+Note.prototype.modInst = function (instrumentMod){
     this.instrumentNum = h.getItem(instrumentMod);
 }
 Note.prototype.modPitch = function (pitchMod){
@@ -51,9 +53,9 @@ function Seq(firstMusic, secondMusic){
 }
 Seq.prototype.play = function (startTime) {
     t = this.firstMusic.play(startTime);
-    console.log("t = " + t);
+    // console.log("t = " + t);
     t1 = this.secondMusic.play(t);
-    console.log("t1 = " + t1);
+    // console.log("t1 = " + t1);
     return t1;
 }
 Seq.prototype.modInst = function (instrumentMod){

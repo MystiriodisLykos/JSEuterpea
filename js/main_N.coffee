@@ -1,12 +1,12 @@
 ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    * File: main.js
+    * File: main_N.coffee
     * -----------------
     * This is the main Javascript file.
     * This contains all the Javascript that works top level,
     * meaning all the UI and the call to evaluate which accesses all the dataobjects.
-    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
-$(document).ready -> # Wait for page to lead to run JavaScript
+$(document).ready -> # Wait for page to load to run JavaScript
     # Variable Declaration
 
     # Functions
@@ -62,7 +62,17 @@ $(document).ready -> # Wait for page to lead to run JavaScript
 
     $('#playMusic').click ->
         #Example sequences
-        testMidi = new Note 'acoustic_grand_piano', 60, 100, 2
+#        testMidi = new Note 'acoustic_grand_piano', 60, 100, 2
+#        midiStuff = (new Seq \
+#            (new Para \
+#                (new Note "alto_sax", 55, 40, 3), \
+#                (new Note "synth_drum", 65, 100, 3)), \
+#            (new Seq \
+#                (new Para \
+#                    (new Note "alto_sax", 40, 60, 2), \
+#                    (new Note "alto_sax", 80, 40, 5)), \
+#                (new Note "flute", 50, 40, 1)))
+        midiStuff = new Seq (new Note 'flute', 60, 40, 2), (new Note 'alto_sax', 60, 40, 2)
         #Loading MIDI plugin
         MIDI.loadPlugin
             soundfontUrl: './Resources/MIDI.js-master/soundfont/'
@@ -72,6 +82,7 @@ $(document).ready -> # Wait for page to lead to run JavaScript
                 'acoustic_guitar_nylon'
                 'acoustic_guitar_steel'
                 'alto_sax'
+                'flute'
             ]
             callback: ->
                 #Setting instruments to channels (channelNumber, instrumentValue)
@@ -101,10 +112,10 @@ $(document).ready -> # Wait for page to lead to run JavaScript
                 MIDI.setVolume 3, 20
                 MIDI.setVolume 4, 20
                 #Playing notes
-                # midiStuff.play 0
+                midiStuff.play 0
                 # midiStuff.modVel 2
                 # midiStuff.play 3
-                testMidi.play 0
+#                testMidi.play 0
                 return
         #end MIDI.loadPlugin
         return

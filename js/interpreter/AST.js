@@ -6,7 +6,7 @@
  ** BASIC STRUCTURE OF AST
  Constant            = ASTConst
  Variable            = ASTVar
- Assignment          = ASTAssign (equals or definition)
+ Assignment          = ASTAssign (definition)
  Application         = ASTApp (@)
  Lambda Abstraction  = ASTLambda
 
