@@ -23,7 +23,7 @@ function PrattParser(tokenStream) {
 		}
 		switch(curToken.type) {
 			case "Integer":
-				return createAstConst(curToken)
+				return createAstConst(curToken);
 				break;
 			case ("Name" || "Symbol"):
 				return createAstVar(curToken);
@@ -41,8 +41,10 @@ function PrattParser(tokenStream) {
 			}
 		}
 	} // i loop
-	var tsL = getArrRange(0,minPresIdx - 1, tokenStream);
-	var tsR = getArrRange(minPresIdx + 1, tokenStream.length - 1, tokenStream);
+	// var tsL = getArrRange(0,minPresIdx - 1, tokenStream);
+    var tsL = tokenStream.slice(0, minPresIdx);
+	// var tsR = getArrRange(minPresIdx + 1, tokenStream.length - 1, tokenStream);
+    var tsR = tokenStream.slice(minPresIdx + 1);
 	var astL = PrattParser(tsL);
 	var astR = PrattParser(tsR);
 	var operator = createAstVar(tokenStream[minPresIdx]);
@@ -191,7 +193,8 @@ function prePrattParser(tokenStream) {
 					}
 				}
 			} // j loop 
-			body = getArrRange(i+1 ,idx-1,tokenStream);
+			// body = getArrRange(i+1 ,idx-1,tokenStream);
+			body = tokenStream.slice(i+1 ,idx);
 			retAst = PrattParser(preParse(body));
 			defArr.push(createAstDef(name,retAst));
 		}

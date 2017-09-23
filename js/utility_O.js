@@ -77,6 +77,8 @@ function splitByLine(text) {
 	for(var i=0; i<split.length; i++) {
 		ret.push(split[i]);
 	}
+	console.log(split)
+    console.log(ret)
 	return ret;
 }
 

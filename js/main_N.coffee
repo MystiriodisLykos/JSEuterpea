@@ -1,6 +1,6 @@
 ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     * File: main.js
-    * ----------------
+    * -----------------
     * This is the main Javascript file.
     * This contains all the Javascript that works top level,
     * meaning all the UI and the call to evaluate which accesses all the dataobjects.
@@ -37,6 +37,7 @@ $(document).ready -> # Wait for page to lead to run JavaScript
         prePrattParser tokenStream
 #        console.log envP
 #        console.log envP.eval new Token 'y'
+#        console.log envP.eval new Token 'x'
         return
 
     # Function Calls * Called when page loads

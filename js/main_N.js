@@ -2,7 +2,7 @@
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     * File: main.js
-    * ----------------
+    * -----------------
     * This is the main Javascript file.
     * This contains all the Javascript that works top level,
     * meaning all the UI and the call to evaluate which accesses all the dataobjects.
