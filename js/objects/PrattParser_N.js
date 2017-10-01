@@ -89,7 +89,7 @@
     for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
       if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
-        if (curToken.pres < minPres) {
+        if (curToken.pres <= minPres) {
           minPres = curToken.pres;
           minPresIdx = i;
         }
@@ -113,7 +113,7 @@
         * The return value is the tokenStream with these ASTs inserted
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var arg, assoc, body, column, curToken, endP, endToken, fn, i, j, k, l, len, len1, operator, parens, pres, ref, res, row, type;
+    var arg, assoc, body, column, curToken, endP, endToken, fn, i, j, k, l, len, len1, operator, parNum, parens, pres, ref, res, row, type;
     res = [];
     operator = false;
     parens = false;
@@ -121,16 +121,22 @@
       curToken = tokenStream[i];
       if (curToken.type !== 'White Space') {
         if (parens) {
-          if (curToken.body === ')') {
+          if (curToken.body === ')' && i === endP) {
             parens = false;
             operator = true;
           }
         } else if (curToken.body === '(') {
           endP = -1;
+          parNum = 1;
           ref = tokenStream.slice(i + 1);
           for (j = l = 0, len1 = ref.length; l < len1; j = ++l) {
             endToken = ref[j];
-            if (endToken.body === ')') {
+            if (endToken.body === '(') {
+              parNum++;
+            } else if (endToken.body === ')') {
+              parNum--;
+            }
+            if (parNum === 0) {
               endP = j + i + 1;
               break;
             }
@@ -143,7 +149,12 @@
           parens = true;
         } else if (!operator) {
           operator = true;
-          if (!isOperand(curToken)) {
+          if (curToken.body === '-' && (!tokenStream[i - 1] || !isOperand(tokenStream[i - 1]))) {
+            body = curToken.body, column = curToken.column, row = curToken.row, type = curToken.type, pres = curToken.pres, assoc = curToken.assoc;
+            res.push(new Token(0, column - 1, row, 'Integer'));
+            res.push(curToken);
+            operator = false;
+          } else if (!isOperand(curToken)) {
             console.log("Error");
             console.log(curToken);
           } else {
@@ -151,10 +162,7 @@
           }
         } else if (operator) {
           operator = false;
-          if (curToken.body === '-' && tokenStream[i - i] && !isOperand(tokenStream[i - 1])) {
-            body = curToken.body, column = curToken.column, row = curToken.row, type = curToken.type, pres = curToken.pres, assoc = curToken.assoc;
-            res.push(new Token(-body, column, row, type, pres, assoc));
-          } else if (isOperand(curToken)) {
+          if (isOperand(curToken)) {
             fn = PrattParser([res.pop()]);
             arg = PrattParser([curToken]);
             res.push(createAstApp(fn, arg));

@@ -54,7 +54,7 @@ PrattParser = (tokenStream) ->
     minPresIdx = 0
     for curToken, i in tokenStream
         if curToken.type not in ['White Space', 'Newline']
-            if curToken.pres < minPres
+            if curToken.pres <= minPres
                 minPres = curToken.pres
                 minPresIdx = i
     tokenStreamL = tokenStream.slice 0, minPresIdx
@@ -78,13 +78,18 @@ preParse = (tokenStream) ->
     for curToken, i in tokenStream
         if curToken.type != 'White Space'
             if parens
-                if curToken.body == ')'
+                if curToken.body == ')' and i == endP
                     parens = false
                     operator = true
             else if curToken.body == '('
                 endP = -1
+                parNum = 1
                 for endToken, j in tokenStream[i+1..]
-                    if endToken.body == ')'
+                    if endToken.body == '('
+                        parNum++
+                    else if endToken.body == ')'
+                        parNum--
+                    if parNum == 0
                         endP = j + i + 1;
                         break
                 if endP == -1
@@ -92,21 +97,21 @@ preParse = (tokenStream) ->
                 else
                     res.push(PrattParser(preParse tokenStream[(i+1)...endP]))
                 parens = true
-
-            else if not operator
+            else if not operator  # Looking for an operand
                 operator = true
-                if not isOperand curToken
+                if curToken.body == '-' and (not tokenStream[i - 1] or not isOperand tokenStream[i - 1])
+                    {body, column, row, type, pres, assoc} = curToken
+                    res.push(new Token 0, column-1, row, 'Integer')
+                    res.push(curToken)
+                    operator = false
+                else if not isOperand curToken
                     console.log "Error"
                     console.log curToken
                 else
                     res.push curToken
-
-            else if operator
+            else if operator  # Looking for an operator
                 operator = false
-                if curToken.body == '-' and tokenStream[i - i] and not isOperand tokenStream[i - 1]
-                    {body, column, row, type, pres, assoc} = curToken
-                    res.push(new Token -body, column, row, type, pres, assoc)
-                else if isOperand(curToken)
+                if isOperand(curToken)
                     fn = PrattParser [res.pop()]
                     arg = PrattParser [curToken]
                     res.push(createAstApp fn, arg)
