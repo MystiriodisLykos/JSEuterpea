@@ -34,11 +34,11 @@ $(document).ready -> # Wait for page to load to run JavaScript
 #        console.log input
         tokenStream = tokenize input
 #        console.log tokenStream
-        prePrattParser tokenStream
+        parser tokenStream
 #        console.log envP
-#        console.log envP.eval new Token 'y'
-#        console.log envP.eval new Token 'x'
-#        console.log envP.eval new Token 'z'
+        console.log envP.eval new Token 'x'
+        console.log envP.eval new Token 'y'
+        console.log envP.eval new Token 'z'
         return
 
     # Function Calls * Called when page loads

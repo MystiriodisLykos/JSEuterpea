@@ -36,7 +36,10 @@
       var tokenStream;
       input = splitByLine(input);
       tokenStream = tokenize(input);
-      prePrattParser(tokenStream);
+      parser(tokenStream);
+      console.log(envP["eval"](new Token('x')));
+      console.log(envP["eval"](new Token('y')));
+      console.log(envP["eval"](new Token('z')));
     };
     init();
     $('#run').click(function() {

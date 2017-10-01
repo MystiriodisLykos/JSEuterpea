@@ -110,7 +110,8 @@ function preParse(tokenStream) {
                     console.log("Error Missing closing )");
                 }
                 else {
-                    ret.push(PrattParser(preParse(getArrRange(i + 1, endP - 1, tokenStream))));
+					ret.push(PrattParser(preParse(tokenStream.slice(i+1, endP))));
+                    // ret.push(PrattParser(preParse(getArrRange(i + 1, endP - 1, tokenStream))));
                     i = j;
                 }
             }

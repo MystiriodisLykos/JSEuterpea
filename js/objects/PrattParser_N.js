@@ -8,17 +8,70 @@
  */
 
 (function() {
-  var PrattParser;
+  var PrattParser, findNonWhite, isOperand, nonWhiteSpace, preParse;
+
+  isOperand = function(token) {
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        * isOperand(Token token)
+        * ----------------
+        * Takes a token and decided if its an Operand(true) or an Operator(false)
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     */
+    var ref;
+    if ((ref = token.type) === 'Name' || ref === 'Integer') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  nonWhiteSpace = function(tokenStream) {
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        * nonWhiteSpace([Token] tokenStream)
+        * ----------------
+        * Returns the number of non white space tokens in tokenStream
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     */
+    var curToken, k, len, nonWS, ref;
+    nonWS = 0;
+    for (k = 0, len = tokenStream.length; k < len; k++) {
+      curToken = tokenStream[k];
+      if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
+        nonWS++;
+      }
+    }
+    return nonWS;
+  };
+
+  findNonWhite = function(tokenStream) {
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        * findNonWhite([Token] tokenStream)
+        * ----------------
+        * Returns the first non white space token in tokenStream
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     */
+    var curToken, k, len, ref;
+    for (k = 0, len = tokenStream.length; k < len; k++) {
+      curToken = tokenStream[k];
+      if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
+        return curToken;
+      }
+    }
+  };
 
   PrattParser = function(tokenStream) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        * PrattParser([Tokens] tokenStream)
+        * PrattParser([Token] tokenStream)
         * ----------------
-        *
+        * Turns the tokenStream into one large AST recursively
+        * The tokenStream may contain predefined ASTs
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var curToken, i, j, len, minPres, minPresIdx, minPresdx, ref, results;
+    var astL, astR, curToken, i, k, len, minPres, minPresIdx, operator, ref, tokenStreamL, tokenStreamR;
     if ((nonWhiteSpace(tokenStream)) === 1) {
       curToken = findNonWhite(tokenStream);
       if (!(curToken instanceof Token)) {
@@ -33,21 +86,126 @@
     }
     minPres = 9;
     minPresIdx = 0;
-    results = [];
-    for (i = j = 0, len = tokenStream.length; j < len; i = ++j) {
+    for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
       if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
         if (curToken.pres < minPres) {
           minPres = curToken.pres;
-          results.push(minPresdx = i);
-        } else {
-          results.push(void 0);
+          minPresIdx = i;
         }
-      } else {
-        results.push(void 0);
       }
     }
-    return results;
+    tokenStreamL = tokenStream.slice(0, minPresIdx);
+    tokenStreamR = tokenStream.slice(minPresIdx + 1);
+    astL = PrattParser(tokenStreamL);
+    astR = PrattParser(tokenStreamR);
+    operator = createAstVar(tokenStream[minPresIdx]);
+    return createAstApp(operator, astL, astR);
+  };
+
+  preParse = function(tokenStream) {
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        * preParser([Token] tokenStream)
+        * ----------------
+        * This part of the parser creates ASTs out of function calls (ex. f x where f is the function x is the arg)
+        * and creates ASTs out of things grouped into parentheses.
+        * The return value is the tokenStream with these ASTs inserted
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     */
+    var arg, assoc, body, column, curToken, endP, endToken, fn, i, j, k, l, len, len1, operator, parens, pres, ref, res, row, type;
+    res = [];
+    operator = false;
+    parens = false;
+    for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
+      curToken = tokenStream[i];
+      if (curToken.type !== 'White Space') {
+        if (parens) {
+          if (curToken.body === ')') {
+            parens = false;
+            operator = true;
+          }
+        } else if (curToken.body === '(') {
+          endP = -1;
+          ref = tokenStream.slice(i + 1);
+          for (j = l = 0, len1 = ref.length; l < len1; j = ++l) {
+            endToken = ref[j];
+            if (endToken.body === ')') {
+              endP = j + i + 1;
+              break;
+            }
+          }
+          if (endP === -1) {
+            console.log('Error Missing closing ")"');
+          } else {
+            res.push(PrattParser(preParse(tokenStream.slice(i + 1, endP))));
+          }
+          parens = true;
+        } else if (!operator) {
+          operator = true;
+          if (!isOperand(curToken)) {
+            console.log("Error");
+            console.log(curToken);
+          } else {
+            res.push(curToken);
+          }
+        } else if (operator) {
+          operator = false;
+          if (curToken.body === '-' && tokenStream[i - i] && !isOperand(tokenStream[i - 1])) {
+            body = curToken.body, column = curToken.column, row = curToken.row, type = curToken.type, pres = curToken.pres, assoc = curToken.assoc;
+            res.push(new Token(-body, column, row, type, pres, assoc));
+          } else if (isOperand(curToken)) {
+            fn = PrattParser([res.pop()]);
+            arg = PrattParser([curToken]);
+            res.push(createAstApp(fn, arg));
+          } else {
+            res.push(curToken);
+          }
+        }
+      }
+    }
+    return res;
+  };
+
+  this.parser = function(tokenStream) {
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        * parser([Token] tokenStream) Global
+        * ----------------
+        * Global function that takes tokenStream and turns it into an array of
+        * ASTDefinitions that get added to the enviornmnet
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     */
+    var body, curToken, defArr, endToken, i, idx, j, k, l, len, len1, name, ref, retAst;
+    name = '';
+    body = '';
+    defArr = [];
+    for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
+      curToken = tokenStream[i];
+      if (curToken.body === '=') {
+        name = tokenStream[i - 1].type === 'White Space' ? tokenStream[i - 2] : tokenStream[i - 1];
+        idx = -1;
+        ref = tokenStream.slice(i + 1);
+        for (j = l = 0, len1 = ref.length; l < len1; j = ++l) {
+          endToken = ref[j];
+          if (endToken.type === 'Newline') {
+            if (tokenStream[j + i + 2]) {
+              if (tokenStream[j + i + 2].type !== 'White Space') {
+                idx = j + i + 1;
+                break;
+              }
+            } else {
+              idx = j + i + 1;
+              break;
+            }
+          }
+        }
+        body = tokenStream.slice(i + 1, idx);
+        retAst = PrattParser(preParse(body));
+        defArr.push(createAstDef(name, retAst));
+      }
+    }
+    return createDefs(defArr);
   };
 
 }).call(this);
