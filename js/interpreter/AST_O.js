@@ -110,7 +110,7 @@ function createAstApp() {
             value: function (env) {
                 var func = ret.fn.eval(env);
                 var t = new Thunk(ret.args, env);
-                return func.apply(t);
+                return func.apply(null, t);
             },
         },
     });

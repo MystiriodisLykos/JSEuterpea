@@ -26,7 +26,7 @@ var env1 = new Env("*", multThunk, env0);
 
 var funDiv = new createFunPValue(2, divF);
 var divThunk = new Thunk(funDiv);
-var envP = new Env("/", divThunk, env1);
+envP = new Env("/", divThunk, env1);
 
 // var c3 = new Note("acoustic_grand_piano", 36, 100, 1);
 // var c3v = new createMusValue(c3);

@@ -72,18 +72,34 @@ function createFunPValue(n, fn) {
     return ret;
 }
 
+var valFunLVar = createValue();
+function createFunLValue(arg, fn, env) {
+    var ret = Object.create(valFunLVar, {
+        apply: {
+            value: function(thunk) {
+                envL = new Env(ret.arg, thunk, ret.env);
+                return ret.fn.eval(envL)
+            }
+        }
+    });
+    ret.arg = arg;
+    ret.fn = fn;
+    ret.env = env;
+    return ret
+}
+
 var valMusVar = createValue();
 function createMusValue(val) {
     var ret = Object.create(valMusVar, {
         getType: {
             value: function() {
                 return "Music";
-            },
+            }
         },
         apply: {
             value: function (thunk) {
                 if (thunk) {
-                    console.log("Cannont apply Music to token")
+                    console.log("Cannot apply Music to token");
                     console.log(thunk);
                     return;
                 }
@@ -94,48 +110,3 @@ function createMusValue(val) {
     ret.val = val;
     return ret;
 }
-/*
- ValNums are Values that hard holding a known Value.
- These could be things like Intergers, Strings, or Booleans
- */
-// var ValNum = function(n) {
-//     this.n = n;
-// };
-// ValNum.prototype = Object.create(Value.prototype);
-// ValNum.prototype.constructor = ValNum;
-
-// ValNum.prototype.isNum = function () {
-//     return true;
-// };
-
-// /*
-//     These are Values that hold Primative Functions
-//     For now Primative Functions are going to be things like add and subtract
-//  */
-// var ValFunP = function(n, fn) {
-//     if (n.isFunc()) {
-//         copy = n;
-//         this.n = copy.n;
-//         this.fn = copy.fn;
-//         this.args = fn;
-//     }
-//     else {
-//         this.n = n;
-//         this.fn = fn;
-//         this.args = [];
-//     }
-// };
-// ValFunP.prototype = Object.create(Value.prototype);
-// ValFunP.prototype.constructor = ValFunP;
-
-// ValFunP.isFunc = function() {
-//     return true;
-// };
-
-// ValFunP.prototype.apply = function (t) {
-//     var tempArgs = this.args.concat(t);
-//     if (tempArgs.size() == this.n) {
-//         return this.fn.apply(temp.args);
-//     }
-//     return new ValFunP(this, tempArgs);
-// };
