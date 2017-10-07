@@ -77,7 +77,7 @@ function createFunLValue(arg, fn, env) {
     var ret = Object.create(valFunLVar, {
         apply: {
             value: function(thunk) {
-                envL = new Env(ret.arg, thunk, ret.env);
+                envL = new Env(ret.arg.body, thunk, ret.env);
                 return ret.fn.eval(envL)
             }
         }

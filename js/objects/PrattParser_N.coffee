@@ -76,7 +76,7 @@ preParse = (tokenStream) ->
     operator = false  # false: Haven't found an operator | true: Have found an operator
     parens = false  # false: Not inside of parens | true: parsing inside of parens       parens :: ()
     for curToken, i in tokenStream
-        if curToken.type != 'White Space'
+        if curToken.type != 'White Space' and curToken.type != 'Newline'
             if parens
                 if curToken.body == ')' and i == endP
                     parens = false
@@ -100,7 +100,7 @@ preParse = (tokenStream) ->
             else if not operator  # Looking for an operand
                 operator = true
                 if curToken.body == '-' and (not tokenStream[i - 1] or not isOperand tokenStream[i - 1])
-                    {body, column, row, type, pres, assoc} = curToken
+                    {column, row} = curToken
                     res.push(new Token 0, column-1, row, 'Integer')
                     res.push(curToken)
                     operator = false
@@ -115,6 +115,7 @@ preParse = (tokenStream) ->
                     fn = PrattParser [res.pop()]
                     arg = PrattParser [curToken]
                     res.push(createAstApp fn, arg)
+                    operator = true
                 else
                     res.push curToken
     return res
@@ -131,7 +132,27 @@ preParse = (tokenStream) ->
     defArr = []
     for curToken, i in tokenStream
         if curToken.body == '='
-            name = if tokenStream[i-1].type == 'White Space' then tokenStream[i-2] else tokenStream[i-1]
+#            name = if tokenStream[i-1].type == 'White Space' then tokenStream[i-2] else tokenStream[i-1]
+
+            args = []
+            name = ''
+            backwards = tokenStream[...i].reverse()
+            for e, j in backwards
+                if e.type != 'White Space' and e.body != ':'
+                    if not backwards[j+1] or not backwards[j+2] or \
+                       backwards[j+1].type == 'Newline' or backwards[j+2].type == 'Newline'
+                        name = e
+                        break
+                    if backwards[j+1].body == ':' or backwards[j+2].body == ':'
+                        args.unshift(e)
+                    else
+                        args.unshift(e)
+                        if backwards[j+1].type == 'White Space'
+                            name = backwards[j+2]
+                        else
+                            name = backwards[j+1]
+                        break
+
             idx = -1
             for endToken, j in tokenStream[(i+1)..]
                 if endToken.type == 'Newline'
@@ -144,5 +165,9 @@ preParse = (tokenStream) ->
                         break
             body = tokenStream[i+1...idx]
             retAst = PrattParser(preParse body)
+
+            if args.length > 0
+                retAst = new ASTLambda retAst, args...
+
             defArr.push(createAstDef name, retAst)
     createDefs(defArr)

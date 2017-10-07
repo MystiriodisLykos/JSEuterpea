@@ -154,14 +154,14 @@ class @ASTDef
         return
 
 
-class ASTLambda
+class @ASTLambda
     constructor: (fn, args...) ->
         if args.length == 1
             @fn = fn
             @arg = args[0]
         else
-            @arg = args[0]
-            @fn = ASTLambda(fn, args[1...])
+            @arg = args.pop()
+            @fn = new ASTLambda(fn, args...)
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -8,7 +8,8 @@
  */
 
 (function() {
-  var PrattParser, findNonWhite, isOperand, nonWhiteSpace, preParse;
+  var PrattParser, findNonWhite, isOperand, nonWhiteSpace, preParse,
+    slice = [].slice;
 
   isOperand = function(token) {
 
@@ -113,13 +114,13 @@
         * The return value is the tokenStream with these ASTs inserted
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var arg, assoc, body, column, curToken, endP, endToken, fn, i, j, k, l, len, len1, operator, parNum, parens, pres, ref, res, row, type;
+    var arg, column, curToken, endP, endToken, fn, i, j, k, l, len, len1, operator, parNum, parens, ref, res, row;
     res = [];
     operator = false;
     parens = false;
     for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
-      if (curToken.type !== 'White Space') {
+      if (curToken.type !== 'White Space' && curToken.type !== 'Newline') {
         if (parens) {
           if (curToken.body === ')' && i === endP) {
             parens = false;
@@ -150,7 +151,7 @@
         } else if (!operator) {
           operator = true;
           if (curToken.body === '-' && (!tokenStream[i - 1] || !isOperand(tokenStream[i - 1]))) {
-            body = curToken.body, column = curToken.column, row = curToken.row, type = curToken.type, pres = curToken.pres, assoc = curToken.assoc;
+            column = curToken.column, row = curToken.row;
             res.push(new Token(0, column - 1, row, 'Integer'));
             res.push(curToken);
             operator = false;
@@ -166,6 +167,7 @@
             fn = PrattParser([res.pop()]);
             arg = PrattParser([curToken]);
             res.push(createAstApp(fn, arg));
+            operator = true;
           } else {
             res.push(curToken);
           }
@@ -184,17 +186,39 @@
         * ASTDefinitions that get added to the enviornmnet
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var body, curToken, defArr, endToken, i, idx, j, k, l, len, len1, name, ref, retAst;
+    var args, backwards, body, curToken, defArr, e, endToken, i, idx, j, k, l, len, len1, len2, m, name, ref, retAst;
     name = '';
     body = '';
     defArr = [];
     for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
       if (curToken.body === '=') {
-        name = tokenStream[i - 1].type === 'White Space' ? tokenStream[i - 2] : tokenStream[i - 1];
+        args = [];
+        name = '';
+        backwards = tokenStream.slice(0, i).reverse();
+        for (j = l = 0, len1 = backwards.length; l < len1; j = ++l) {
+          e = backwards[j];
+          if (e.type !== 'White Space' && e.body !== ':') {
+            if (!backwards[j + 1] || !backwards[j + 2] || backwards[j + 1].type === 'Newline' || backwards[j + 2].type === 'Newline') {
+              name = e;
+              break;
+            }
+            if (backwards[j + 1].body === ':' || backwards[j + 2].body === ':') {
+              args.unshift(e);
+            } else {
+              args.unshift(e);
+              if (backwards[j + 1].type === 'White Space') {
+                name = backwards[j + 2];
+              } else {
+                name = backwards[j + 1];
+              }
+              break;
+            }
+          }
+        }
         idx = -1;
         ref = tokenStream.slice(i + 1);
-        for (j = l = 0, len1 = ref.length; l < len1; j = ++l) {
+        for (j = m = 0, len2 = ref.length; m < len2; j = ++m) {
           endToken = ref[j];
           if (endToken.type === 'Newline') {
             if (tokenStream[j + i + 2]) {
@@ -210,6 +234,13 @@
         }
         body = tokenStream.slice(i + 1, idx);
         retAst = PrattParser(preParse(body));
+        if (args.length > 0) {
+          retAst = (function(func, args, ctor) {
+            ctor.prototype = func.prototype;
+            var child = new ctor, result = func.apply(child, args);
+            return Object(result) === result ? result : child;
+          })(ASTLambda, [retAst].concat(slice.call(args)), function(){});
+        }
         defArr.push(createAstDef(name, retAst));
       }
     }

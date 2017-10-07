@@ -13,8 +13,7 @@
  */
 
 (function() {
-  var ASTLambda,
-    slice = [].slice;
+  var slice = [].slice;
 
   this.ASTConst = (function() {
 
@@ -228,7 +227,7 @@
 
   })();
 
-  ASTLambda = (function() {
+  this.ASTLambda = (function() {
     function ASTLambda() {
       var args, fn;
       fn = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
@@ -236,8 +235,12 @@
         this.fn = fn;
         this.arg = args[0];
       } else {
-        this.arg = args[0];
-        this.fn = ASTLambda(fn, args.slice(1));
+        this.arg = args.pop();
+        this.fn = (function(func, args, ctor) {
+          ctor.prototype = func.prototype;
+          var child = new ctor, result = func.apply(child, args);
+          return Object(result) === result ? result : child;
+        })(ASTLambda, [fn].concat(slice.call(args)), function(){});
       }
     }
 
