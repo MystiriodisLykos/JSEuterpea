@@ -1,5 +1,5 @@
 ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    * File: utility_N.coffee
+    * File: AST_N.coffee
     * ----------------
     * Contains all AST (Abstract Syntax Tree) classes
     * Constant            = ASTConst
@@ -39,7 +39,7 @@ class @ASTConst
             * ----------------
             * Returns a NumValue of the token body.
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        return createNumValue(@token.body)
+        return createNumValue @token.body
 
 
 class @ASTVar
@@ -71,7 +71,7 @@ class @ASTVar
             * ----------------
             * Evaluates the token using the env provided. Returns the value provided
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        return env.eval(@token)
+        return env.eval @token
 
 
 class @ASTApp
@@ -96,7 +96,7 @@ class @ASTApp
         else  # If there are 2 or more arguments store last argument and make the function the application of the
               # function and the remaining arguments
             @arg = args.pop()
-            @fn = new ASTApp(fn, args...)
+            @fn = new ASTApp fn, args...
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -113,9 +113,9 @@ class @ASTApp
             * ----------------
             * Evaluates the function using the env provided and then applies the last argument to the function
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        func = @fn.eval(env)
+        func = @fn.eval env
         arg = new Thunk @arg, env
-        return func.apply(arg)
+        return func.apply arg
 
 
 class @ASTDef
@@ -133,7 +133,7 @@ class @ASTDef
             * Right is the Thunk containing the AST and the envP to evaluate the thunk on
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         @left = left.body
-        @right = new Thunk(ast, envP)
+        @right = new Thunk ast, envP
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -150,7 +150,7 @@ class @ASTDef
             * ----------------
             * Puts this definition into the environment
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        window.envP = new Env(@left, @right, env)
+        window.envP = new Env @left, @right, env
         return
 
 
@@ -161,7 +161,7 @@ class @ASTLambda
             @arg = args[0]
         else
             @arg = args.pop()
-            @fn = new ASTLambda(fn, args...)
+            @fn = new ASTLambda fn, args...
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -176,10 +176,10 @@ class @ASTLambda
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             * eval (Env env)
             * ----------------
-            * Puts this definition into the environment
+            *
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        envL = new Env(@arg.body, 'Missing ' + @arg.body, env)
-        return createFunLValue(@arg, @fn, envL)
+        envL = new Env @arg.body, 'Missing ' + @arg.body, env
+        return createFunLValue @arg, @fn, envL
 
 
 @createDefs = (definitions) ->
@@ -189,7 +189,7 @@ class @ASTLambda
         * evaluates the array of AST definitions and replaces the thunks in the Env with the new envP
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     for d in definitions
-        d.eval(window.envP)
+        d.eval window.envP
     e = window.envP
     while e != null
         e.val.e = window.envP
