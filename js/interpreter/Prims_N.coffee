@@ -1,17 +1,17 @@
 seq = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return createMusValue (Seq fmv, smv)
+    return new createMusValue (Seq fmv, smv)
 
 par = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return createMusValue (Par fmv, smv)
+    return new createMusValue (Par fmv, smv)
 
 
 modifyInst = (m, inst) ->
     mv = m.asMusic()
-    return createMusValue (mv.modInst inst)
+    return new createMusValue (mv.modInst inst)
 
 pianoF = (m) ->
     return modifyInst m, 'acoustic_grand_piano'
@@ -25,7 +25,7 @@ violinF = (m) ->
 
 modifyDur = (m, dur) ->
     mv = m.asMusic()
-    return createMusValue (mv.modDur dur)
+    return new createMusValue (mv.modDur dur)
 
 halfF = (m) ->
     return modifyDur m, .5
@@ -42,7 +42,7 @@ sixteenthF = (m) ->
 
 modifyPitch = (m, p) ->
     mv = m.asMusic()
-    return createMusValue (mv.modPitch p)
+    return new createMusValue (mv.modPitch p)
 
 pitchUpF = (m) ->
     return modifyPitch m, 2
@@ -53,7 +53,7 @@ pitchDownF = (m) ->
 
 newDyn = (m, d) ->
     mv = m.asMusic()
-    return createMusValue (mv.newVel d)
+    return new createMusValue (mv.newVel d)
 
 dynPF = (m) ->
     return newDyn m, 25
@@ -72,7 +72,7 @@ dynFfF = (m) ->
 
 modifyDyn = (m, d) ->
     mv = m.asMusiic()
-    return createMusValue (mv.modVel d)
+    return new createMusValue (mv.modVel d)
 
 dynUpF = (m) ->
     return modifyDyn m, 2
@@ -104,22 +104,22 @@ dynDownF = (m) ->
 plusF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return createNumValue xv+yv
+    return new createNumValue xv+yv
 
 minusF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return createNumValue xv-yv
+    return new createNumValue xv-yv
 
 mulF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return createNumValue xv*yv
+    return new createNumValue xv*yv
 
 divF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return createNumValue xv/yv
+    return new createNumValue xv/yv
 
 @prims = {'+': plusF, \
           '-': minusF, \

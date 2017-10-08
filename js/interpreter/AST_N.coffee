@@ -39,7 +39,7 @@ class @ASTConst
             * ----------------
             * Returns a NumValue of the token body.
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        return createNumValue @token.body
+        return new createNumValue @token.body
 
 
 class @ASTVar
@@ -179,7 +179,7 @@ class @ASTLambda
             *
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         envL = new Env @arg.body, 'Missing ' + @arg.body, env
-        return createFunLValue @arg, @fn, envL
+        return new createFunLValue @arg, @fn, envL
 
 
 @createDefs = (definitions) ->

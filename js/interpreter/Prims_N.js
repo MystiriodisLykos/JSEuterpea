@@ -6,20 +6,20 @@
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return createMusValue(Seq(fmv, smv));
+    return new createMusValue(Seq(fmv, smv));
   };
 
   par = function(fm, sm) {
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return createMusValue(Par(fmv, smv));
+    return new createMusValue(Par(fmv, smv));
   };
 
   modifyInst = function(m, inst) {
     var mv;
     mv = m.asMusic();
-    return createMusValue(mv.modInst(inst));
+    return new createMusValue(mv.modInst(inst));
   };
 
   pianoF = function(m) {
@@ -37,7 +37,7 @@
   modifyDur = function(m, dur) {
     var mv;
     mv = m.asMusic();
-    return createMusValue(mv.modDur(dur));
+    return new createMusValue(mv.modDur(dur));
   };
 
   halfF = function(m) {
@@ -59,7 +59,7 @@
   modifyPitch = function(m, p) {
     var mv;
     mv = m.asMusic();
-    return createMusValue(mv.modPitch(p));
+    return new createMusValue(mv.modPitch(p));
   };
 
   pitchUpF = function(m) {
@@ -73,7 +73,7 @@
   newDyn = function(m, d) {
     var mv;
     mv = m.asMusic();
-    return createMusValue(mv.newVel(d));
+    return new createMusValue(mv.newVel(d));
   };
 
   dynPF = function(m) {
@@ -99,7 +99,7 @@
   modifyDyn = function(m, d) {
     var mv;
     mv = m.asMusiic();
-    return createMusValue(mv.modVel(d));
+    return new createMusValue(mv.modVel(d));
   };
 
   dynUpF = function(m) {
@@ -114,28 +114,28 @@
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return createNumValue(xv + yv);
+    return new createNumValue(xv + yv);
   };
 
   minusF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return createNumValue(xv - yv);
+    return new createNumValue(xv - yv);
   };
 
   mulF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return createNumValue(xv * yv);
+    return new createNumValue(xv * yv);
   };
 
   divF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return createNumValue(xv / yv);
+    return new createNumValue(xv / yv);
   };
 
   this.prims = {

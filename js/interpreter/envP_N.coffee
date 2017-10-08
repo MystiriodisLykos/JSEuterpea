@@ -7,7 +7,7 @@
 @envP = null
 
 for name, fn of prims
-    fnV = createFunPValue fn.length, fn
+    fnV = new createFunPValue fn.length, fn
     @envP = new Env name, (new Thunk fnV), @envP
 
 notes = {'c3': 36, \
@@ -20,5 +20,5 @@ notes = {'c3': 36, \
          'c4': 48}
 
 for name, note of notes
-    mv = createMusValue (new Note 'acoustic_grad_piano', note, 100, 1)
+    mv = new createMusValue (new Note 'acoustic_grad_piano', note, 100, 1)
     @envP = new Env name, (new Thunk mv), @envP

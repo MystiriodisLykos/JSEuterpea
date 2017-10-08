@@ -203,9 +203,7 @@ class @Note
            * ----------------
            * Modifies this Notes Velocity by the velocityMod and binds it to less than 129
            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        @velocity = if @velocity * velocityMod > 128 \
-        then 128 \
-        else velocityMod * @velocity
+        @velocity = if @velocity * velocityMod > 128 then 128 else velocityMod * @velocity
         return
 
     newVel: (newVelocity) ->

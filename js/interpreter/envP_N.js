@@ -14,7 +14,7 @@
 
   for (name in prims) {
     fn = prims[name];
-    fnV = createFunPValue(fn.length, fn);
+    fnV = new createFunPValue(fn.length, fn);
     this.envP = new Env(name, new Thunk(fnV), this.envP);
   }
 
@@ -31,7 +31,7 @@
 
   for (name in notes) {
     note = notes[name];
-    mv = createMusValue(new Note('acoustic_grad_piano', note, 100, 1));
+    mv = new createMusValue(new Note('acoustic_grad_piano', note, 100, 1));
     this.envP = new Env(name, new Thunk(mv), this.envP);
   }
 

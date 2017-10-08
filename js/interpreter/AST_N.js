@@ -56,7 +56,7 @@
           * Returns a NumValue of the token body.
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
-      return createNumValue(this.token.body);
+      return new createNumValue(this.token.body);
     };
 
     return ASTConst;
@@ -266,7 +266,7 @@
        */
       var envL;
       envL = new Env(this.arg.body, 'Missing ' + this.arg.body, env);
-      return createFunLValue(this.arg, this.fn, envL);
+      return new createFunLValue(this.arg, this.fn, envL);
     };
 
     return ASTLambda;
