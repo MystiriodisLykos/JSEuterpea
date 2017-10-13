@@ -1,12 +1,12 @@
 seq = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return new createMusValue (Seq fmv, smv)
+    return new createMusValue (Music.Seq fmv, smv)
 
 par = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return new createMusValue (Par fmv, smv)
+    return new createMusValue (Music.Par fmv, smv)
 
 
 modifyInst = (m, inst) ->

@@ -59,8 +59,6 @@
       console.log(evalRet);
     });
     $('#playMusic').click(function() {
-      var midiStuff;
-      midiStuff = new Seq(new Note('flute', 60, 40, 2), new Note('alto_sax', 60, 40, 2));
       MIDI.loadPlugin({
         soundfontUrl: './Resources/MIDI.js-master/soundfont/',
         instrument: ['acoustic_grand_piano', 'synth_drum', 'acoustic_guitar_nylon', 'acoustic_guitar_steel', 'alto_sax', 'flute'],

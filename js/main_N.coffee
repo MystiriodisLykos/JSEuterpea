@@ -72,7 +72,7 @@ $(document).ready -> # Wait for page to load to run JavaScript
 #                    (new Note "alto_sax", 40, 60, 2), \
 #                    (new Note "alto_sax", 80, 40, 5)), \
 #                (new Note "flute", 50, 40, 1)))
-        midiStuff = new Seq (new Note 'flute', 60, 40, 2), (new Note 'alto_sax', 60, 40, 2)
+#        midiStuff = new Seq (new Note 'flute', 60, 40, 2), (new Note 'alto_sax', 60, 40, 2)
         #Loading MIDI plugin
         MIDI.loadPlugin
             soundfontUrl: './Resources/MIDI.js-master/soundfont/'

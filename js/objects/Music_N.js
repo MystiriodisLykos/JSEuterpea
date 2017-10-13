@@ -8,9 +8,10 @@
  */
 
 (function() {
-  var slice = [].slice;
+  var Note, Para, Seq,
+    slice = [].slice;
 
-  this.Note = (function() {
+  Note = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Note
@@ -257,7 +258,7 @@
 
   })();
 
-  this.Seq = (function() {
+  Seq = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Seq
@@ -368,7 +369,7 @@
 
   })();
 
-  this.Para = (function() {
+  Para = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Para
@@ -476,6 +477,12 @@
     return Para;
 
   })();
+
+  this.Music = {
+    Note: Note,
+    Seq: Seq,
+    Para: Para
+  };
 
 }).call(this);
 

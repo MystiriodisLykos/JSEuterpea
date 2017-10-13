@@ -6,14 +6,14 @@
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return new createMusValue(Seq(fmv, smv));
+    return new createMusValue(Music.Seq(fmv, smv));
   };
 
   par = function(fm, sm) {
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return new createMusValue(Par(fmv, smv));
+    return new createMusValue(Music.Par(fmv, smv));
   };
 
   modifyInst = function(m, inst) {

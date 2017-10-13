@@ -31,7 +31,7 @@
 
   for (name in notes) {
     note = notes[name];
-    mv = new createMusValue(new Note('acoustic_grad_piano', note, 100, 1));
+    mv = new createMusValue(new Music.Note('acoustic_grad_piano', note, 100, 1));
     this.envP = new Env(name, new Thunk(mv), this.envP);
   }
 
