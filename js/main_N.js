@@ -34,7 +34,7 @@
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
       var tokenStream;
-      input = splitByLine(input);
+      input = Utility.splitByLine(input);
       tokenStream = tokenize(input);
       parser(tokenStream);
       console.log(envP["eval"](new Token('x')));

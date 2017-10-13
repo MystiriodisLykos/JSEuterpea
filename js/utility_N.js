@@ -8,7 +8,9 @@
  */
 
 (function() {
-  this.isInt = function(value) {
+  var checkComment, checkName, cleanWhiteSpace, getArrRange, getAssoc, getLineBreaks, getPres, isBuiltInFunc, isInt, isLetter, isSpecial, isSymbol, isWhiteSpace, splitByLine;
+
+  isInt = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isInt(String value)
@@ -21,7 +23,7 @@
     return (48 <= c && c <= 57);
   };
 
-  this.sBuiltInFunc = function(char) {
+  isBuiltInFunc = function(char) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isBuiltInFunc(String value)
@@ -35,7 +37,7 @@
     }
   };
 
-  this.isSpecial = function(value) {
+  isSpecial = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSpecial(String value)
@@ -53,7 +55,7 @@
     return false;
   };
 
-  this.isSymbol = function(value) {
+  isSymbol = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSymbol(String value)
@@ -71,7 +73,7 @@
     return false;
   };
 
-  this.isLetter = function(value) {
+  isLetter = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isLetter(String value)
@@ -85,7 +87,7 @@
     return (65 <= c && c <= 90) || (97 <= c && c <= 122) || c === 95;
   };
 
-  this.isWhiteSpace = function(value) {
+  isWhiteSpace = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isWhiteSpace(String value)
@@ -98,7 +100,7 @@
     return c === 32;
   };
 
-  this.getLineBreaks = function(text) {
+  getLineBreaks = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getLineBreaks(String text)
@@ -109,7 +111,7 @@
     return ((text.match(/\n/g)) || []).length;
   };
 
-  this.splitByLine = function(text) {
+  splitByLine = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * splitByLine(String text)
@@ -120,7 +122,7 @@
     return text.splitWithIndex('\n');
   };
 
-  this.checkComment = function(text) {
+  checkComment = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkComment(String text)
@@ -131,7 +133,7 @@
     return text.length >= 2 && (text.substring(0, 2)) === '--';
   };
 
-  this.cleanWhiteSpace = function(tokenStream) {
+  cleanWhiteSpace = function(tokenStream) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * cleanWhiteSpace(TokenStream tokenStream)
@@ -158,7 +160,7 @@
     return res;
   };
 
-  this.getPres = function(text) {
+  getPres = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getPres (String text)
@@ -176,7 +178,7 @@
     return void 0;
   };
 
-  this.getAssoc = function(text) {
+  getAssoc = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getAssoc (String text)
@@ -194,12 +196,12 @@
     return void 0;
   };
 
-  this.getArrRange = function(start, end, array) {
+  getArrRange = function(start, end, array) {
     console.trace();
     throw 'Use array.slice(start, end)\n';
   };
 
-  this.checkName = function(text) {
+  checkName = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkName (String text)
@@ -218,6 +220,19 @@
       }
     }
     return true;
+  };
+
+  this.Utility = {
+    splitByLine: splitByLine,
+    isInt: isInt,
+    isSpecial: isSpecial,
+    isSymbol: isSymbol,
+    isLetter: isLetter,
+    isWhiteSpace: isWhiteSpace,
+    cleanWhiteSpace: cleanWhiteSpace,
+    checkComment: checkComment,
+    getPres: getPres,
+    getAssoc: getAssoc
   };
 
   String.prototype.splitWithIndex = function(delim) {

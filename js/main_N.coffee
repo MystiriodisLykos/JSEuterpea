@@ -30,7 +30,7 @@ $(document).ready -> # Wait for page to load to run JavaScript
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
         # First step is to split into an array based on line breaks
-        input = splitByLine input
+        input = Utility.splitByLine input
 #        console.log input
         tokenStream = tokenize input
 #        console.log tokenStream
