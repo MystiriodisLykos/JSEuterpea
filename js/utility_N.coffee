@@ -30,7 +30,7 @@ isSpecial = (value) ->
         * ----------------
         * This function takes a string and determines if it is a special character
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    for sc in special
+    for sc in environment.special
         if sc == value
             return true
     return false
@@ -41,7 +41,7 @@ isSymbol = (value) ->
         * ----------------
         * This function takes a string and determines if it is a symbol
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    for s in symbol
+    for s in environment.symbol
         if s.symbol == value
             return true
     return false
@@ -119,7 +119,7 @@ getPres = (text) ->
         * ----------------
         * Gets the president of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    for s in symbol
+    for s in environment.symbol
         if text == s.symbol
             return s.pres
     return undefined
@@ -130,7 +130,7 @@ getAssoc = (text) ->
         * ----------------
         * Gets the association of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    for s in symbol
+    for s in environment.symbol
         if text == s.symbol
             return s.assoc
     return undefined

@@ -3,9 +3,9 @@
     * -----------------
     * This file contains all the environment syntax
     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-@special = ['(', ')', ',', ';', '[', ']', '`', '{', '}']
+special = ['(', ')', ',', ';', '[', ']', '`', '{', '}']
 
-@symbol = []
+symbol = []
 
 period = {symbol: '.', pres: 9, assoc: 'r'}
 symbol.push period
@@ -72,3 +72,8 @@ symbol.push money
 
 moneyExclam = {symbol: "$!", pres: 0, assoc: "r"};
 symbol.push moneyExclam
+
+@environment = {
+    special: special,
+    symbol: symbol
+}

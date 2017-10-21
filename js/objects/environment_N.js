@@ -8,11 +8,11 @@
  */
 
 (function() {
-  var andAnd, carrot, colon, divEqual, doubleCarrot, doubleEquals, doubleStar, equalLessLess, greatEqual, greatGreat, greatGreatEqual, greater, lessThan, lessThanEqual, minus, money, moneyExclam, orOr, period, plus, slash, star;
+  var andAnd, carrot, colon, divEqual, doubleCarrot, doubleEquals, doubleStar, equalLessLess, greatEqual, greatGreat, greatGreatEqual, greater, lessThan, lessThanEqual, minus, money, moneyExclam, orOr, period, plus, slash, special, star, symbol;
 
-  this.special = ['(', ')', ',', ';', '[', ']', '`', '{', '}'];
+  special = ['(', ')', ',', ';', '[', ']', '`', '{', '}'];
 
-  this.symbol = [];
+  symbol = [];
 
   period = {
     symbol: '.',
@@ -189,6 +189,11 @@
   };
 
   symbol.push(moneyExclam);
+
+  this.environment = {
+    special: special,
+    symbol: symbol
+  };
 
 }).call(this);
 

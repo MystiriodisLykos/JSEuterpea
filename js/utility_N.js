@@ -45,9 +45,10 @@
         * This function takes a string and determines if it is a special character
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, sc;
-    for (j = 0, len = special.length; j < len; j++) {
-      sc = special[j];
+    var j, len, ref, sc;
+    ref = environment.special;
+    for (j = 0, len = ref.length; j < len; j++) {
+      sc = ref[j];
       if (sc === value) {
         return true;
       }
@@ -63,9 +64,10 @@
         * This function takes a string and determines if it is a symbol
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var j, len, ref, s;
+    ref = environment.symbol;
+    for (j = 0, len = ref.length; j < len; j++) {
+      s = ref[j];
       if (s.symbol === value) {
         return true;
       }
@@ -168,9 +170,10 @@
         * Gets the president of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var j, len, ref, s;
+    ref = environment.symbol;
+    for (j = 0, len = ref.length; j < len; j++) {
+      s = ref[j];
       if (text === s.symbol) {
         return s.pres;
       }
@@ -186,9 +189,10 @@
         * Gets the association of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var j, len, ref, s;
+    ref = environment.symbol;
+    for (j = 0, len = ref.length; j < len; j++) {
+      s = ref[j];
       if (text === s.symbol) {
         return s.assoc;
       }
