@@ -10,7 +10,7 @@
     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
 
-class @ASTConst
+class ASTConst
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTConst
         * ----------------
@@ -39,10 +39,10 @@ class @ASTConst
             * ----------------
             * Returns a NumValue of the token body.
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        return new createNumValue @token.body
+        return new Value.Const @token.body
 
 
-class @ASTVar
+class ASTVar
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTVar
         * ----------------
@@ -74,7 +74,7 @@ class @ASTVar
         return env.eval @token
 
 
-class @ASTApp
+class ASTApp
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTApp
         * ----------------
@@ -118,7 +118,7 @@ class @ASTApp
         return func.apply arg
 
 
-class @ASTDef
+class ASTDef
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTDef
         * ----------------
@@ -154,7 +154,7 @@ class @ASTDef
         return
 
 
-class @ASTLambda
+class ASTLambda
     constructor: (fn, args...) ->
         if args.length == 1
             @fn = fn
@@ -179,10 +179,10 @@ class @ASTLambda
             *
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         envL = new Env @arg.body, 'Missing ' + @arg.body, env
-        return new createFunLValue @arg, @fn, envL
+        return new Value.FunL @arg, @fn, envL
 
 
-@createDefs = (definitions) ->
+createDefs = (definitions) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * createDefs ([ASTDef] definitions)
         * ----------------
@@ -196,11 +196,20 @@ class @ASTLambda
         e = e.parent
 
 
-@createAstConst = (token) ->
+createAstConst = (token) ->
     return new ASTConst token
-@createAstVar = (token) ->
+createAstVar = (token) ->
     return new ASTVar token
-@createAstApp = (fn, args...) ->
+createAstApp = (fn, args...) ->
     return new ASTApp fn, args...
-@createAstDef = (l, r) ->
+createAstDef = (l, r) ->
     return new ASTDef l, r
+
+@AST = {
+    Const: ASTConst,
+    Var: ASTVar,
+    Def: ASTDef,
+    App: ASTApp,
+    Lambda: ASTLambda,
+    createDefs: createDefs
+}

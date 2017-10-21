@@ -6,20 +6,20 @@
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return new createMusValue(Music.Seq(fmv, smv));
+    return new Value.Mus(Music.Seq(fmv, smv));
   };
 
   par = function(fm, sm) {
     var fmv, smv;
     fmv = fm.asMusic();
     smv = sm.asMusic();
-    return new createMusValue(Music.Par(fmv, smv));
+    return new Value.Mus(Music.Par(fmv, smv));
   };
 
   modifyInst = function(m, inst) {
     var mv;
     mv = m.asMusic();
-    return new createMusValue(mv.modInst(inst));
+    return new Value.Mus(mv.modInst(inst));
   };
 
   pianoF = function(m) {
@@ -37,7 +37,7 @@
   modifyDur = function(m, dur) {
     var mv;
     mv = m.asMusic();
-    return new createMusValue(mv.modDur(dur));
+    return new Value.Mus(mv.modDur(dur));
   };
 
   halfF = function(m) {
@@ -59,7 +59,7 @@
   modifyPitch = function(m, p) {
     var mv;
     mv = m.asMusic();
-    return new createMusValue(mv.modPitch(p));
+    return new Value.Mus(mv.modPitch(p));
   };
 
   pitchUpF = function(m) {
@@ -73,7 +73,7 @@
   newDyn = function(m, d) {
     var mv;
     mv = m.asMusic();
-    return new createMusValue(mv.newVel(d));
+    return new Value.Mus(mv.newVel(d));
   };
 
   dynPF = function(m) {
@@ -99,7 +99,7 @@
   modifyDyn = function(m, d) {
     var mv;
     mv = m.asMusiic();
-    return new createMusValue(mv.modVel(d));
+    return new Value.Mus(mv.modVel(d));
   };
 
   dynUpF = function(m) {
@@ -114,28 +114,28 @@
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return new createNumValue(xv + yv);
+    return new Value.Const(xv + yv);
   };
 
   minusF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return new createNumValue(xv - yv);
+    return new Value.Const(xv - yv);
   };
 
   mulF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return new createNumValue(xv * yv);
+    return new Value.Const(xv * yv);
   };
 
   divF = function(x, y) {
     var xv, yv;
     xv = x.asNum();
     yv = y.asNum();
-    return new createNumValue(xv / yv);
+    return new Value.Const(xv / yv);
   };
 
   this.prims = {

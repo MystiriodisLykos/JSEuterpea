@@ -13,9 +13,10 @@
  */
 
 (function() {
-  var slice = [].slice;
+  var ASTApp, ASTConst, ASTDef, ASTLambda, ASTVar, createAstApp, createAstConst, createAstDef, createAstVar, createDefs,
+    slice = [].slice;
 
-  this.ASTConst = (function() {
+  ASTConst = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTConst
@@ -56,14 +57,14 @@
           * Returns a NumValue of the token body.
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
-      return new createNumValue(this.token.body);
+      return new Value.Const(this.token.body);
     };
 
     return ASTConst;
 
   })();
 
-  this.ASTVar = (function() {
+  ASTVar = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTVar
@@ -111,7 +112,7 @@
 
   })();
 
-  this.ASTApp = (function() {
+  ASTApp = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTApp
@@ -177,7 +178,7 @@
 
   })();
 
-  this.ASTDef = (function() {
+  ASTDef = (function() {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * ASTDef
@@ -227,7 +228,7 @@
 
   })();
 
-  this.ASTLambda = (function() {
+  ASTLambda = (function() {
     function ASTLambda() {
       var args, fn;
       fn = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
@@ -266,14 +267,14 @@
        */
       var envL;
       envL = new Env(this.arg.body, 'Missing ' + this.arg.body, env);
-      return new createFunLValue(this.arg, this.fn, envL);
+      return new Value.FunL(this.arg, this.fn, envL);
     };
 
     return ASTLambda;
 
   })();
 
-  this.createDefs = function(definitions) {
+  createDefs = function(definitions) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * createDefs ([ASTDef] definitions)
@@ -295,15 +296,15 @@
     return results;
   };
 
-  this.createAstConst = function(token) {
+  createAstConst = function(token) {
     return new ASTConst(token);
   };
 
-  this.createAstVar = function(token) {
+  createAstVar = function(token) {
     return new ASTVar(token);
   };
 
-  this.createAstApp = function() {
+  createAstApp = function() {
     var args, fn;
     fn = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
     return (function(func, args, ctor) {
@@ -313,8 +314,17 @@
     })(ASTApp, [fn].concat(slice.call(args)), function(){});
   };
 
-  this.createAstDef = function(l, r) {
+  createAstDef = function(l, r) {
     return new ASTDef(l, r);
+  };
+
+  this.AST = {
+    Const: ASTConst,
+    Var: ASTVar,
+    Def: ASTDef,
+    App: ASTApp,
+    Lambda: ASTLambda,
+    createDefs: createDefs
   };
 
 }).call(this);

@@ -1,5 +1,5 @@
 
-class @ConstVal
+class ConstVal
     constructor: (@val) ->
 
     apply: (t) ->
@@ -7,7 +7,7 @@ class @ConstVal
             thow 'Cannot apply Constants'
         return @val
 
-class @FunPVal
+class FunPVal
     constructor: (n, fn) ->
         if typeof n == 'number'
             @n = n
@@ -24,14 +24,14 @@ class @FunPVal
             return @fn.apply null, tempArgs
         return new FunPVal(@, tempArgs)
 
-class @FunLVal
+class FunLVal
     constructor: (@arg, @fn, @env) ->
 
     apply: (t) ->
         envL = new Env(@arg.body, t, @env)
         return @fn.eval(envL)
 
-class @MusVal
+class MusVal
     constructor: (@val) ->
 
     apply: (t) ->
@@ -40,11 +40,18 @@ class @MusVal
         return @val
 
 
-@createNumValue = (v) ->
+createNumValue = (v) ->
     return new ConstVal v
-@createFunPValue = (n, fn) ->
+createFunPValue = (n, fn) ->
     return new FunPVal n, fn
-@createFunLValue = (arg, fn, env) ->
+createFunLValue = (arg, fn, env) ->
     return new FunLVal arg, fn, env
-@createMusValue = (v) ->
+createMusValue = (v) ->
     return new MusVal v
+
+@Value = {
+    Const: ConstVal,
+    Mus: MusVal,
+    FunP: FunPVal,
+    FunL: FunLVal
+}

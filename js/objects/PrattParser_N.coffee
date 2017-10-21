@@ -47,9 +47,9 @@ PrattParser = (tokenStream) ->
             return curToken
         switch curToken.type
             when 'Integer' then \
-                return new createAstConst curToken
+                return new AST.Const curToken
             when 'Name' or 'Symbol' then \
-                return new createAstVar curToken
+                return new AST.Var curToken
     minPres = 9
     minPresIdx = 0
     for curToken, i in tokenStream
@@ -61,8 +61,8 @@ PrattParser = (tokenStream) ->
     tokenStreamR = tokenStream.slice minPresIdx + 1
     astL = PrattParser tokenStreamL
     astR = PrattParser tokenStreamR
-    operator = new createAstVar tokenStream[minPresIdx]
-    return new createAstApp operator, astL, astR
+    operator = new AST.Var tokenStream[minPresIdx]
+    return new AST.App operator, astL, astR
 
 preParse = (tokenStream) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -114,7 +114,7 @@ preParse = (tokenStream) ->
                 if isOperand(curToken)
                     fn = PrattParser [res.pop()]
                     arg = PrattParser [curToken]
-                    res.push(new createAstApp fn, arg)
+                    res.push(new AST.App fn, arg)
                     operator = true
                 else
                     res.push curToken
@@ -167,7 +167,7 @@ preParse = (tokenStream) ->
             retAst = PrattParser(preParse body)
 
             if args.length > 0
-                retAst = new ASTLambda retAst, args...
+                retAst = new AST.Lambda retAst, args...
 
-            defArr.push(new createAstDef name, retAst)
-    createDefs(defArr)
+            defArr.push(new AST.Def name, retAst)
+    AST.createDefs(defArr)

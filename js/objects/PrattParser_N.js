@@ -80,9 +80,9 @@
       }
       switch (curToken.type) {
         case 'Integer':
-          return new createAstConst(curToken);
+          return new AST.Const(curToken);
         case 'Name' || 'Symbol':
-          return new createAstVar(curToken);
+          return new AST.Var(curToken);
       }
     }
     minPres = 9;
@@ -100,8 +100,8 @@
     tokenStreamR = tokenStream.slice(minPresIdx + 1);
     astL = PrattParser(tokenStreamL);
     astR = PrattParser(tokenStreamR);
-    operator = new createAstVar(tokenStream[minPresIdx]);
-    return new createAstApp(operator, astL, astR);
+    operator = new AST.Var(tokenStream[minPresIdx]);
+    return new AST.App(operator, astL, astR);
   };
 
   preParse = function(tokenStream) {
@@ -166,7 +166,7 @@
           if (isOperand(curToken)) {
             fn = PrattParser([res.pop()]);
             arg = PrattParser([curToken]);
-            res.push(new createAstApp(fn, arg));
+            res.push(new AST.App(fn, arg));
             operator = true;
           } else {
             res.push(curToken);
@@ -239,12 +239,12 @@
             ctor.prototype = func.prototype;
             var child = new ctor, result = func.apply(child, args);
             return Object(result) === result ? result : child;
-          })(ASTLambda, [retAst].concat(slice.call(args)), function(){});
+          })(AST.Lambda, [retAst].concat(slice.call(args)), function(){});
         }
-        defArr.push(new createAstDef(name, retAst));
+        defArr.push(new AST.Def(name, retAst));
       }
     }
-    return createDefs(defArr);
+    return AST.createDefs(defArr);
   };
 
 }).call(this);
