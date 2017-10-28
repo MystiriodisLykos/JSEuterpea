@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "TokenizerTest.js",
+  "sourceRoot": "",
+  "sources": [
+    "TokenizerTest.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,MAAA;;EAAA,KAAA,GAAQ,WAAA,CAAY,YAAZ;;EACR,OAAO,CAAC,GAAR,CAAY,KAAZ;;EACA,OAAO,CAAC,GAAR,CAAY,QAAA,CAAS,KAAT,CAAZ;AAFA"
+}
