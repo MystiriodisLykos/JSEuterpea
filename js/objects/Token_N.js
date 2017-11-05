@@ -8,17 +8,6 @@
  */
 
 (function() {
-  var tokenTypes;
-
-  tokenTypes = {
-    '^=': 'Equals',
-    '^\\s+': 'White Space',
-    '^[a-zA-Z]': 'Name',
-    '^\\d+\\.?\\d*': 'Number',
-    '^[()\\[\\]{},;`]': 'Special',
-    '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'Symbol'
-  };
-
   this.Token = (function() {
     function Token(body1, column, row1, type1, pres1, assoc1) {
       this.body = body1;
@@ -32,7 +21,7 @@
           * constructor (body, Int column, Int row, String type, Int pres, Int assoc)
           * ----------------
           * Constructor for a Token.
-          * type :: [Integer, Special, White Space, Symbol, Name]
+          * type :: [EQUAL, WHITE SPACE, NAME, NUMBER, SPECIAL, SYMBOL, INDENT, DEDENT]
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
     }
@@ -46,32 +35,40 @@
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * tokenize ([String] lineArr)
         * ----------------
-        * Takes a token and decided if its an Operand(true) or an Operator(false)
+        * lineArr is an array of strings where each string is a line of input
+        * Turns the lineArr into an array of Tokens
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var _, assoc, body, col, dedents, i, ind, indLevels, j, k, len, len1, len2, match, pres, re, ref, ref1, ref2, res, row, s, type;
+    var _, assoc, body, col, dedents, i, ind, indLevels, j, k, len, len1, len2, match, pres, re, ref, ref1, ref2, res, row, s, tokenTypes, type;
+    tokenTypes = {
+      '^=': 'EQUAL',
+      '^\\s+': 'WHITE SPACE',
+      '^[a-zA-Z]\\w*': 'NAME',
+      '^\\d+\\.?\\d*': 'NUMBER',
+      '^[()\\[\\]{},;`]': 'SPECIAL',
+      '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'SYMBOL'
+    };
     indLevels = [0];
     res = [];
     for (i = 0, len = lineArr.length; i < len; i++) {
       ref = lineArr[i], row = ref[0], s = ref[1];
-      col = 0;
       re = new RegExp('^\\s+');
       ind = re.test(s) ? (re.exec(s))[0].length : 0;
       s.replace(re, '');
       col = ind;
       if (ind > indLevels[indLevels.length - 1]) {
-        res.push(new Token('', row, ind, 'Indent'));
+        res.push(new Token('', row, ind, 'INDENT'));
         indLevels.push(ind);
       } else {
         if (ind < indLevels[indLevels.length - 1]) {
           dedents = indLevels.indexOf(ind);
           if (dedents === -1) {
-            throw 'Inconsistent Indents';
+            throw 'Inconsistent Indent on Line: ' + row;
           }
           ref1 = indLevels.length - dedents - 1;
           for (j = 0, len1 = ref1.length; j < len1; j++) {
             _ = ref1[j];
-            res.push(new Token('', row, ind, 'Dedent'));
+            res.push(new Token('', row, ind, 'DEDENT'));
             indLevels.pop();
           }
         }
@@ -82,10 +79,13 @@
           type = tokenTypes[re];
           re = new RegExp(re);
           if (re.test(s)) {
-            body = (re.exec(s))[0];
             match = true;
+            body = (re.exec(s))[0];
             pres = getPres(body);
             assoc = getAssoc(body);
+            if (type === 'NUMBER') {
+              body = parseFloat(body);
+            }
             res.push(new Token(body, col, row, type, pres, assoc));
             col += body.length;
             s = s.replace(re, '');
@@ -96,13 +96,13 @@
           throw 'Unknown character at (Row:' + row + ', Col:' + col;
         }
       }
-      res.push(new Token('\n', col, row, 'Newline'));
+      res.push(new Token('\n', col, row, 'NEWLINE'));
     }
     if (indLevels.length > 1) {
       ref2 = indLevels.length - 1;
       for (k = 0, len2 = ref2.length; k < len2; k++) {
         _ = ref2[k];
-        res.push(new Token('', 0, row + 1, 'Dedent'));
+        res.push(new Token('', 0, row + 1, 'DEDENT'));
       }
     }
     return res;
