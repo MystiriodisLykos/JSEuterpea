@@ -11,9 +11,12 @@
   var tokenTypes;
 
   tokenTypes = {
+    '^=': 'Equals',
     '^\\s+': 'White Space',
+    '^[a-zA-Z]': 'Name',
     '^\\d+\\.?\\d*': 'Number',
-    '^[()\\[\\]{},;`]': 'Special'
+    '^[()\\[\\]{},;`]': 'Special',
+    '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'Symbol'
   };
 
   this.Token = (function() {
@@ -46,11 +49,33 @@
         * Takes a token and decided if its an Operand(true) or an Operator(false)
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var assoc, body, col, i, len, match, pres, re, ref, res, row, s, type;
+    var _, assoc, body, col, dedents, i, ind, indLevels, j, k, len, len1, len2, match, pres, re, ref, ref1, ref2, res, row, s, type;
+    indLevels = [0];
     res = [];
     for (i = 0, len = lineArr.length; i < len; i++) {
       ref = lineArr[i], row = ref[0], s = ref[1];
       col = 0;
+      re = new RegExp('^\\s+');
+      ind = re.test(s) ? (re.exec(s))[0].length : 0;
+      s.replace(re, '');
+      col = ind;
+      if (ind > indLevels[indLevels.length - 1]) {
+        res.push(new Token('', row, ind, 'Indent'));
+        indLevels.push(ind);
+      } else {
+        if (ind < indLevels[indLevels.length - 1]) {
+          dedents = indLevels.indexOf(ind);
+          if (dedents === -1) {
+            throw 'Inconsistent Indents';
+          }
+          ref1 = indLevels.length - dedents - 1;
+          for (j = 0, len1 = ref1.length; j < len1; j++) {
+            _ = ref1[j];
+            res.push(new Token('', row, ind, 'Dedent'));
+            indLevels.pop();
+          }
+        }
+      }
       while (s !== '') {
         match = false;
         for (re in tokenTypes) {
@@ -68,8 +93,16 @@
           }
         }
         if (!match) {
-          throw 'Unknown character';
+          throw 'Unknown character at (Row:' + row + ', Col:' + col;
         }
+      }
+      res.push(new Token('\n', col, row, 'Newline'));
+    }
+    if (indLevels.length > 1) {
+      ref2 = indLevels.length - 1;
+      for (k = 0, len2 = ref2.length; k < len2; k++) {
+        _ = ref2[k];
+        res.push(new Token('', 0, row + 1, 'Dedent'));
       }
     }
     return res;
