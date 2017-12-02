@@ -26,15 +26,16 @@ class @Token
         '^\\s+': 'WHITE SPACE',
         '^[a-zA-Z]\\w*': 'NAME',
         '^\\d+\\.?\\d*': 'NUMBER',
-        '^[()\\[\\]{},;`]': 'SPECIAL'
-        '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'SYMBOL'
+        '^[()\\[\\]{},;`]': 'SPECIAL',
+        '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'SYMBOL',
+        '^return': 'RETURN'
     indLevels = [0]  # Stack for keeping track of indentation levels
     res = []  # Result tokenStream
     for [row, s] in lineArr  # Go through each line (row is the row index: s is the string for that row)
         # Finds the number of whitespace characters at the start of the line that indicates the indentation
         re = new RegExp '^\\s+'
         ind = if re.test s then (re.exec s)[0].length else 0
-        s.replace re, ''  # Remove indentation white space
+        s = s.replace re, ''  # Remove indentation white space
         col = ind  # set the column index to the end of the indentation
         if ind > indLevels[indLevels.length-1]
             # If the level of indentation is greater than the largest found so far
@@ -48,7 +49,7 @@ class @Token
                 if dedents == -1
                     # If this level of indentation does not exits in the stack than the indentation is inconsistent
                     throw 'Inconsistent Indent on Line: ' + row
-                for _ in indLevels.length - dedents - 1
+                for _ in [0...indLevels.length - dedents - 1]
                     # Add an appropriate number of dedent Tokens
                     res.push (new Token '', row, ind, 'DEDENT')
                     indLevels.pop()
@@ -74,7 +75,7 @@ class @Token
         res.push (new Token '\n', col, row, 'NEWLINE')  # Add a new line token
     if indLevels.length > 1
         # If the length is greater than 1 there are Indent tokens that are not matched with a Dedent token
-        for _ in indLevels.length - 1
+        for _ in [0...indLevels.length - 1]
             # Add the appropriate number of Dedent Tokens
             res.push (new Token '', 0, row+1, 'DEDENT')
     return res

@@ -1,3 +1,4 @@
-input = splitByLine '15  2\n3.4'
+test = 'func a:b =\n    3+b*a\n'
+input = splitByLine test
 console.log input
 console.log tokenize input

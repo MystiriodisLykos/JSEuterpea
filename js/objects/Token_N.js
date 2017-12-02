@@ -39,14 +39,15 @@
         * Turns the lineArr into an array of Tokens
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var _, assoc, body, col, dedents, i, ind, indLevels, j, k, len, len1, len2, match, pres, re, ref, ref1, ref2, res, row, s, tokenTypes, type;
+    var _, assoc, body, col, dedents, i, ind, indLevels, j, k, len, match, pres, re, ref, ref1, ref2, res, row, s, tokenTypes, type;
     tokenTypes = {
       '^=': 'EQUAL',
       '^\\s+': 'WHITE SPACE',
       '^[a-zA-Z]\\w*': 'NAME',
       '^\\d+\\.?\\d*': 'NUMBER',
       '^[()\\[\\]{},;`]': 'SPECIAL',
-      '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'SYMBOL'
+      '^(\\.|!{2}|\\*{1,2}|\\^{1,2}|/=?|\\+{1,2}|-|:|==|[<>]{1,2}=?|&&|\\|\\||\\$!?)': 'SYMBOL',
+      '^return': 'RETURN'
     };
     indLevels = [0];
     res = [];
@@ -54,7 +55,7 @@
       ref = lineArr[i], row = ref[0], s = ref[1];
       re = new RegExp('^\\s+');
       ind = re.test(s) ? (re.exec(s))[0].length : 0;
-      s.replace(re, '');
+      s = s.replace(re, '');
       col = ind;
       if (ind > indLevels[indLevels.length - 1]) {
         res.push(new Token('', row, ind, 'INDENT'));
@@ -65,9 +66,7 @@
           if (dedents === -1) {
             throw 'Inconsistent Indent on Line: ' + row;
           }
-          ref1 = indLevels.length - dedents - 1;
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
-            _ = ref1[j];
+          for (_ = j = 0, ref1 = indLevels.length - dedents - 1; 0 <= ref1 ? j < ref1 : j > ref1; _ = 0 <= ref1 ? ++j : --j) {
             res.push(new Token('', row, ind, 'DEDENT'));
             indLevels.pop();
           }
@@ -99,9 +98,7 @@
       res.push(new Token('\n', col, row, 'NEWLINE'));
     }
     if (indLevels.length > 1) {
-      ref2 = indLevels.length - 1;
-      for (k = 0, len2 = ref2.length; k < len2; k++) {
-        _ = ref2[k];
+      for (_ = k = 0, ref2 = indLevels.length - 1; 0 <= ref2 ? k < ref2 : k > ref2; _ = 0 <= ref2 ? ++k : --k) {
         res.push(new Token('', 0, row + 1, 'DEDENT'));
       }
     }
