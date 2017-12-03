@@ -4,7 +4,7 @@
     * Contains code to create Tokens and to tokenize a string array
     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
-class @Token
+class Token
     constructor: (@body, @column, @row, @type, @pres, @assoc) ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             * constructor (body, Int column, Int row, String type, Int pres, Int assoc)
@@ -13,7 +13,7 @@ class @Token
             * type :: [EQUAL, WHITE SPACE, NAME, NUMBER, SPECIAL, SYMBOL, INDENT, DEDENT]
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
-@tokenize = (lineArr) ->
+tokenize = (lineArr) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * tokenize ([String] lineArr)
         * ----------------
@@ -79,3 +79,7 @@ class @Token
             # Add the appropriate number of Dedent Tokens
             res.push (new Token '', 0, row+1, 'DEDENT')
     return res
+
+@Token =
+    Token: Token,
+    tokenize: tokenize

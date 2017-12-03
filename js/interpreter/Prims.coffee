@@ -80,25 +80,25 @@ dynUpF = (m) ->
 dynDownF = (m) ->
     return modifyDyn m, .5
 
-
-#@prims = {'+': seq, \
-#          '*': par, \
-#          'piano': pianoF, \
-#          'marimba': marimbaF, \
-#          'violin': violinF, \
-#          'h': halfF, \
-#          'q': quarterF, \
-#          'e': eighthF, \
-#          's': sixteenthF, \
-#          'pUp': pitchUpF, \
-#          'pDown': pitchDownF, \
-#          'dynP': dynPF, \
-#          'dynMp': dynMpF, \
-#          'dynMf': dynMfF, \
-#          'dynF': dynFF, \
-#          'dynFf': dynFfF, \
-#          'dynUp': dynUpF, \
-#          'dynDown': dynDownF}
+prims =
+    '+': seq,
+    '*': par,
+    'piano': pianoF,
+    'marimba': marimbaF,
+    'violin': violinF,
+    'h': halfF,
+    'q': quarterF,
+    'e': eighthF,
+    's': sixteenthF,
+    'pUp': pitchUpF,
+    'pDown': pitchDownF,
+    'dynP': dynPF,
+    'dynMp': dynMpF,
+    'dynMf': dynMfF,
+    'dynF': dynFF,
+    'dynFf': dynFfF,
+    'dynUp': dynUpF,
+    'dynDown': dynDownF
 
 
 plusF = (x, y) ->
@@ -121,7 +121,31 @@ divF = (x, y) ->
     yv = y.asNum()
     return new Value.Const xv/yv
 
-@prims = {'+': plusF, \
-          '-': minusF, \
-          '*': mulF, \
-          '/': divF}
+prims =
+    '+': plusF,
+    '-': minusF,
+    '*': mulF,
+    '/': divF
+
+
+envP = null
+
+for name, fn of prims
+    fnV = new Value.FunP fn.length, fn
+    envP = new Env name, (new Thunk fnV), envP
+
+notes =
+    'c3': 36,
+    'd3': 38,
+    'e3': 40,
+    'f3': 41,
+    'g3': 43,
+    'a4': 45,
+    'b4': 47,
+    'c4': 48
+
+for name, note of notes
+    mv = new Value.Mus (new Music.Note 'acoustic_grad_piano', note, 100, 1)
+    envP = new Env name, (new Thunk mv), envP
+
+@envP = envP

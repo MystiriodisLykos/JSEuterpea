@@ -152,7 +152,7 @@
           operator = true;
           if (curToken.body === '-' && (!tokenStream[i - 1] || !isOperand(tokenStream[i - 1]))) {
             column = curToken.column, row = curToken.row;
-            res.push(new Token(0, column - 1, row, 'Integer'));
+            res.push(new Token.Token(0, column - 1, row, 'Integer'));
             res.push(curToken);
             operator = false;
           } else if (!isOperand(curToken)) {
@@ -249,4 +249,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=PrattParser.js.map
+//# sourceMappingURL=Parser.js.map

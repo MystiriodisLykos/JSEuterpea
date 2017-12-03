@@ -78,19 +78,19 @@
   })();
 
   createNumValue = function(v) {
-    return new ConstVal(v);
+    throw 'Use Value.Const';
   };
 
   createFunPValue = function(n, fn) {
-    return new FunPVal(n, fn);
+    throw 'Use Value.FunP';
   };
 
   createFunLValue = function(arg, fn, env) {
-    return new FunLVal(arg, fn, env);
+    throw 'Use Value.FunL';
   };
 
   createMusValue = function(v) {
-    return new MusVal(v);
+    throw 'Use Value.Mus';
   };
 
   this.Value = {

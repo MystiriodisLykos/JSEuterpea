@@ -1,5 +1,5 @@
 ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    * File: AST_N.coffee
+    * File: AST.coffee
     * ----------------
     * Contains all AST (Abstract Syntax Tree) classes
     * Constant            = ASTConst
@@ -114,7 +114,7 @@ class ASTApp
             * Evaluates the function using the env provided and then applies the last argument to the function
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         func = @fn.eval env
-        arg = new Thunk @arg, env
+        arg = new Env.Thunk @arg, env
         return func.apply arg
 
 
@@ -133,7 +133,7 @@ class ASTDef
             * Right is the Thunk containing the AST and the envP to evaluate the thunk on
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         @left = left.body
-        @right = new Thunk ast, envP
+        @right = new Env.Thunk ast, @envP
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -150,8 +150,7 @@ class ASTDef
             * ----------------
             * Puts this definition into the environment
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        window.envP = new Env @left, @right, env
-        return
+        return new Env.Env @left, @right, env
 
 
 class ASTLambda
@@ -178,7 +177,7 @@ class ASTLambda
             * ----------------
             *
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-        envL = new Env @arg.body, 'Missing ' + @arg.body, env
+        envL = new Env.Env @arg.body, 'Missing ' + @arg.body, env
         return new Value.FunL @arg, @fn, envL
 
 
@@ -189,21 +188,21 @@ createDefs = (definitions) ->
         * evaluates the array of AST definitions and replaces the thunks in the Env with the new envP
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     for d in definitions
-        d.eval window.envP
-    e = window.envP
+        @envP = d.eval @envP
+    e = @envP
     while e != null
-        e.val.e = window.envP
+        e.val.e = @envP
         e = e.parent
 
 
 createAstConst = (token) ->
-    return new ASTConst token
+    throw 'Use Ast.Const'
 createAstVar = (token) ->
-    return new ASTVar token
+    throw 'Use AST.Var'
 createAstApp = (fn, args...) ->
-    return new ASTApp fn, args...
+    throw 'Use AST.App'
 createAstDef = (l, r) ->
-    return new ASTDef l, r
+    throw 'Use AST.Def'
 
 @AST = {
     Const: ASTConst,

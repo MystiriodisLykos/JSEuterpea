@@ -101,7 +101,7 @@ preParse = (tokenStream) ->
                 operator = true
                 if curToken.body == '-' and (not tokenStream[i - 1] or not isOperand tokenStream[i - 1])
                     {column, row} = curToken
-                    res.push(new Token 0, column-1, row, 'Integer')
+                    res.push(new Token.Token 0, column-1, row, 'Integer')
                     res.push(curToken)
                     operator = false
                 else if not isOperand curToken

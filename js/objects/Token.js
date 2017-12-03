@@ -8,7 +8,9 @@
  */
 
 (function() {
-  this.Token = (function() {
+  var Token, tokenize;
+
+  Token = (function() {
     function Token(body1, column, row1, type1, pres1, assoc1) {
       this.body = body1;
       this.column = column;
@@ -30,7 +32,7 @@
 
   })();
 
-  this.tokenize = function(lineArr) {
+  tokenize = function(lineArr) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * tokenize ([String] lineArr)
@@ -103,6 +105,11 @@
       }
     }
     return res;
+  };
+
+  this.Token = {
+    Token: Token,
+    tokenize: tokenize
   };
 
 }).call(this);
