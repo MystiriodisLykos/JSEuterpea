@@ -14,6 +14,10 @@
       return this.val;
     };
 
+    ConstVal.prototype.toString = function() {
+      return this.val;
+    };
+
     return ConstVal;
 
   })();
@@ -53,8 +57,12 @@
 
     FunLVal.prototype.apply = function(t) {
       var envL;
-      envL = new Env(this.arg.body, t, this.env);
+      envL = new Env.Env(this.arg.body, t, this.env);
       return this.fn["eval"](envL);
+    };
+
+    FunLVal.prototype.toString = function() {
+      return 'function';
     };
 
     return FunLVal;

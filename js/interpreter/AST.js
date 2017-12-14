@@ -13,7 +13,7 @@
  */
 
 (function() {
-  var ASTApp, ASTConst, ASTDef, ASTLambda, ASTVar, createAstApp, createAstConst, createAstDef, createAstVar, createDefs,
+  var ASTApp, ASTConst, ASTDef, ASTLambda, ASTVar, createAstApp, createAstConst, createAstDef, createAstVar,
     slice = [].slice;
 
   ASTConst = (function() {
@@ -188,7 +188,7 @@
      */
     ASTDef.type = 'Def';
 
-    function ASTDef(left, ast) {
+    function ASTDef(left, ast, env) {
 
       /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           * constructor (left, ast)
@@ -198,7 +198,7 @@
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
       this.left = left.body;
-      this.right = new Env.Thunk(ast, this.envP);
+      this.right = new Env.Thunk(ast, env);
     }
 
     ASTDef.prototype.getAstType = function() {
@@ -274,28 +274,6 @@
 
   })();
 
-  createDefs = function(definitions) {
-
-    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        * createDefs ([ASTDef] definitions)
-        * ----------------
-        * evaluates the array of AST definitions and replaces the thunks in the Env with the new envP
-        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-     */
-    var d, e, i, len, results;
-    for (i = 0, len = definitions.length; i < len; i++) {
-      d = definitions[i];
-      this.envP = d["eval"](this.envP);
-    }
-    e = this.envP;
-    results = [];
-    while (e !== null) {
-      e.val.e = this.envP;
-      results.push(e = e.parent);
-    }
-    return results;
-  };
-
   createAstConst = function(token) {
     throw 'Use Ast.Const';
   };
@@ -319,8 +297,7 @@
     Var: ASTVar,
     Def: ASTDef,
     App: ASTApp,
-    Lambda: ASTLambda,
-    createDefs: createDefs
+    Lambda: ASTLambda
   };
 
 }).call(this);

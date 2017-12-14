@@ -82,8 +82,8 @@
           if (re.test(s)) {
             match = true;
             body = (re.exec(s))[0];
-            pres = getPres(body);
-            assoc = getAssoc(body);
+            pres = Utility.getPres(body);
+            assoc = Utility.getAssoc(body);
             if (type === 'NUMBER') {
               body = parseFloat(body);
             }

@@ -132,7 +132,7 @@ envP = null
 
 for name, fn of prims
     fnV = new Value.FunP fn.length, fn
-    envP = new Env name, (new Thunk fnV), envP
+    envP = new Env.Env name, (new Env.Thunk fnV), envP
 
 notes =
     'c3': 36,
@@ -146,6 +146,6 @@ notes =
 
 for name, note of notes
     mv = new Value.Mus (new Music.Note 'acoustic_grad_piano', note, 100, 1)
-    envP = new Env name, (new Thunk mv), envP
+    envP = new Env.Env name, (new Env.Thunk mv), envP
 
 @envP = envP

@@ -6,6 +6,9 @@ class ConstVal
             thow 'Cannot apply Constants'
         return @val
 
+    toString: () ->
+        return @val
+
 class FunPVal
     constructor: (n, fn) ->
         if typeof n == 'number'
@@ -27,8 +30,11 @@ class FunLVal
     constructor: (@arg, @fn, @env) ->
 
     apply: (t) ->
-        envL = new Env(@arg.body, t, @env)
+        envL = new Env.Env(@arg.body, t, @env)
         return @fn.eval(envL)
+
+    toString: () ->
+        return 'function'
 
 class MusVal
     constructor: (@val) ->

@@ -31,14 +31,19 @@ $(document).ready -> # Wait for page to load to run JavaScript
 
         # First step is to split into an array based on line breaks
         input = Utility.splitByLine input
-#        console.log input
         tokenStream = Token.tokenize input
-#        console.log tokenStream
         parser tokenStream
-#        console.log envP
-        console.log envP.eval new Token 'x'
-        console.log envP.eval new Token 'y'
-        console.log envP.eval new Token 'z'
+
+        e = window.envP
+        names = []
+        out = ''
+        while e.name != 'c4'
+            if e.name not in names
+                names.push(e.name)
+                t = window.envP.eval new Token.Token e.name
+                out += e.name + ': ' + (window.envP.eval new Token.Token e.name) + '\n'
+            e = e.parent
+        $('#output').val out
         return
 
     # Function Calls * Called when page loads

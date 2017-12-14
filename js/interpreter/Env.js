@@ -48,7 +48,7 @@
       }
       if (this.parent === null) {
         console.trace();
-        throw 'Couldn\'t find variable name' + t.body;
+        throw 'Couldn\'t find variable name ' + t.body;
       }
       return this.parent["eval"](t);
     };

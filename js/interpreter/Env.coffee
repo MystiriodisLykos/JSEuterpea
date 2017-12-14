@@ -31,7 +31,7 @@ class Env
             return @val.eval()
         if @parent == null
             console.trace()
-            throw 'Couldn\'t find variable name' + t.body
+            throw 'Couldn\'t find variable name ' + t.body
         return @parent.eval t
 
 

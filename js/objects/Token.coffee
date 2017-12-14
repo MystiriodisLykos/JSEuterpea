@@ -60,8 +60,8 @@ tokenize = (lineArr) ->
                 if re.test s  # If this token matches this regular expression
                     match = true;
                     body = (re.exec s)[0]  # Grab the match
-                    pres = getPres body  # Grab the precedent
-                    assoc = getAssoc body  # Grab the association
+                    pres = Utility.getPres body  # Grab the precedent
+                    assoc = Utility.getAssoc body  # Grab the association
                     if type == 'NUMBER'
                         # Turn body to a float if it is a number
                         body = parseFloat(body)

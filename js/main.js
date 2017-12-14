@@ -10,6 +10,8 @@
  */
 
 (function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
   $(document).ready(function() {
     var evaluate, init;
     init = function() {
@@ -33,13 +35,22 @@
           * Notice that lexer is defined in a different file
           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        */
-      var tokenStream;
+      var e, names, out, ref, t, tokenStream;
       input = Utility.splitByLine(input);
       tokenStream = Token.tokenize(input);
       parser(tokenStream);
-      console.log(envP["eval"](new Token('x')));
-      console.log(envP["eval"](new Token('y')));
-      console.log(envP["eval"](new Token('z')));
+      e = window.envP;
+      names = [];
+      out = '';
+      while (e.name !== 'c4') {
+        if (ref = e.name, indexOf.call(names, ref) < 0) {
+          names.push(e.name);
+          t = window.envP["eval"](new Token.Token(e.name));
+          out += e.name + ': ' + (window.envP["eval"](new Token.Token(e.name))) + '\n';
+        }
+        e = e.parent;
+      }
+      $('#output').val(out);
     };
     init();
     $('#run').click(function() {

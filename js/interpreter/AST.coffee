@@ -125,7 +125,7 @@ class ASTDef
         * AST that represents a variable assigned to another AST
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     @type = 'Def'
-    constructor: (left, ast) ->
+    constructor: (left, ast, env) ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             * constructor (left, ast)
             * ----------------
@@ -133,7 +133,7 @@ class ASTDef
             * Right is the Thunk containing the AST and the envP to evaluate the thunk on
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
         @left = left.body
-        @right = new Env.Thunk ast, @envP
+        @right = new Env.Thunk ast, env
 
     getAstType: () ->
         ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -181,20 +181,6 @@ class ASTLambda
         return new Value.FunL @arg, @fn, envL
 
 
-createDefs = (definitions) ->
-    ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        * createDefs ([ASTDef] definitions)
-        * ----------------
-        * evaluates the array of AST definitions and replaces the thunks in the Env with the new envP
-        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    for d in definitions
-        @envP = d.eval @envP
-    e = @envP
-    while e != null
-        e.val.e = @envP
-        e = e.parent
-
-
 createAstConst = (token) ->
     throw 'Use Ast.Const'
 createAstVar = (token) ->
@@ -210,5 +196,4 @@ createAstDef = (l, r) ->
     Def: ASTDef,
     App: ASTApp,
     Lambda: ASTLambda,
-    createDefs: createDefs
 }
