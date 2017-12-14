@@ -20,7 +20,7 @@
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
     var ref;
-    if ((ref = token.type) === 'Name' || ref === 'Integer') {
+    if ((ref = token.type) === 'NAME' || ref === 'NUMBER') {
       return true;
     } else {
       return false;
@@ -39,7 +39,7 @@
     nonWS = 0;
     for (k = 0, len = tokenStream.length; k < len; k++) {
       curToken = tokenStream[k];
-      if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
+      if ((ref = curToken.type) !== 'WHITESPACE' && ref !== 'NEWLINE') {
         nonWS++;
       }
     }
@@ -57,7 +57,7 @@
     var curToken, k, len, ref;
     for (k = 0, len = tokenStream.length; k < len; k++) {
       curToken = tokenStream[k];
-      if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
+      if ((ref = curToken.type) !== 'WHITESPACE' && ref !== 'NEWLINE') {
         return curToken;
       }
     }
@@ -75,21 +75,21 @@
     var astL, astR, curToken, i, k, len, minPres, minPresIdx, operator, ref, tokenStreamL, tokenStreamR;
     if ((nonWhiteSpace(tokenStream)) === 1) {
       curToken = findNonWhite(tokenStream);
-      if (!(curToken instanceof Token)) {
+      if (!(curToken.constructor.name === 'Token')) {
         return curToken;
       }
       switch (curToken.type) {
-        case 'Integer':
-          return new createAstConst(curToken);
-        case 'Name' || 'Symbol':
-          return new createAstVar(curToken);
+        case 'NUMBER':
+          return new AST.Const(curToken);
+        case 'NAME' || 'SYMBOL':
+          return new AST.Var(curToken);
       }
     }
     minPres = 9;
     minPresIdx = 0;
     for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
-      if ((ref = curToken.type) !== 'White Space' && ref !== 'Newline') {
+      if ((ref = curToken.type) !== 'WHITE SPACE' && ref !== 'NEWLINE') {
         if (curToken.pres <= minPres) {
           minPres = curToken.pres;
           minPresIdx = i;
@@ -100,8 +100,8 @@
     tokenStreamR = tokenStream.slice(minPresIdx + 1);
     astL = PrattParser(tokenStreamL);
     astR = PrattParser(tokenStreamR);
-    operator = new createAstVar(tokenStream[minPresIdx]);
-    return new createAstApp(operator, astL, astR);
+    operator = new AST.Var(tokenStream[minPresIdx]);
+    return new AST.App(operator, astL, astR);
   };
 
   preParse = function(tokenStream) {
@@ -120,7 +120,7 @@
     parens = false;
     for (i = k = 0, len = tokenStream.length; k < len; i = ++k) {
       curToken = tokenStream[i];
-      if (curToken.type !== 'White Space' && curToken.type !== 'Newline') {
+      if (curToken.type !== 'WHITE SPACE' && curToken.type !== 'NEWLINE') {
         if (parens) {
           if (curToken.body === ')' && i === endP) {
             parens = false;
@@ -152,7 +152,7 @@
           operator = true;
           if (curToken.body === '-' && (!tokenStream[i - 1] || !isOperand(tokenStream[i - 1]))) {
             column = curToken.column, row = curToken.row;
-            res.push(new Token(0, column - 1, row, 'Integer'));
+            res.push(new Token.Token(0, column - 1, row, 'NUMBER'));
             res.push(curToken);
             operator = false;
           } else if (!isOperand(curToken)) {
@@ -166,7 +166,7 @@
           if (isOperand(curToken)) {
             fn = PrattParser([res.pop()]);
             arg = PrattParser([curToken]);
-            res.push(new createAstApp(fn, arg));
+            res.push(new AST.App(fn, arg));
             operator = true;
           } else {
             res.push(curToken);
@@ -198,8 +198,8 @@
         backwards = tokenStream.slice(0, i).reverse();
         for (j = l = 0, len1 = backwards.length; l < len1; j = ++l) {
           e = backwards[j];
-          if (e.type !== 'White Space' && e.body !== ':') {
-            if (!backwards[j + 1] || !backwards[j + 2] || backwards[j + 1].type === 'Newline' || backwards[j + 2].type === 'Newline') {
+          if (e.type !== 'WHITE SPACE' && e.body !== ':') {
+            if (!backwards[j + 1] || !backwards[j + 2] || backwards[j + 1].type === 'NEWLINE' || backwards[j + 2].type === 'NEWLINE') {
               name = e;
               break;
             }
@@ -207,7 +207,7 @@
               args.unshift(e);
             } else {
               args.unshift(e);
-              if (backwards[j + 1].type === 'White Space') {
+              if (backwards[j + 1].type === 'WHITE SPACE') {
                 name = backwards[j + 2];
               } else {
                 name = backwards[j + 1];
@@ -220,9 +220,9 @@
         ref = tokenStream.slice(i + 1);
         for (j = m = 0, len2 = ref.length; m < len2; j = ++m) {
           endToken = ref[j];
-          if (endToken.type === 'Newline') {
+          if (endToken.type === 'NEWLINE') {
             if (tokenStream[j + i + 2]) {
-              if (tokenStream[j + i + 2].type !== 'White Space') {
+              if (tokenStream[j + i + 2].type !== 'WHITESPACE') {
                 idx = j + i + 1;
                 break;
               }
@@ -239,14 +239,13 @@
             ctor.prototype = func.prototype;
             var child = new ctor, result = func.apply(child, args);
             return Object(result) === result ? result : child;
-          })(ASTLambda, [retAst].concat(slice.call(args)), function(){});
+          })(AST.Lambda, [retAst].concat(slice.call(args)), function(){});
         }
-        defArr.push(new createAstDef(name, retAst));
+        window.envP = (new AST.Def(name, retAst, window.envP))["eval"](window.envP);
       }
     }
-    return createDefs(defArr);
   };
 
 }).call(this);
 
-//# sourceMappingURL=PrattParser.js.map
+//# sourceMappingURL=Parser.js.map

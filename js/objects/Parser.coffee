@@ -10,7 +10,7 @@ isOperand = (token) ->
         * ----------------
         * Takes a token and decided if its an Operand(true) or an Operator(false)
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    return if token.type in ['Name', 'Integer'] then true else false
+    return if token.type in ['NAME', 'NUMBER'] then true else false
 
 nonWhiteSpace = (tokenStream) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -20,7 +20,7 @@ nonWhiteSpace = (tokenStream) ->
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     nonWS = 0
     for curToken in tokenStream
-        if curToken.type not in ['White Space', 'Newline']
+        if curToken.type not in ['WHITESPACE', 'NEWLINE']
             nonWS++
     return nonWS
 
@@ -31,7 +31,7 @@ findNonWhite = (tokenStream) ->
         * Returns the first non white space token in tokenStream
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     for curToken in tokenStream
-        if curToken.type not in ['White Space', 'Newline']
+        if curToken.type not in ['WHITESPACE', 'NEWLINE']
             return curToken
 
 PrattParser = (tokenStream) ->
@@ -43,17 +43,17 @@ PrattParser = (tokenStream) ->
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     if (nonWhiteSpace tokenStream) == 1
         curToken = findNonWhite tokenStream
-        if not (curToken instanceof Token)
+        if not (curToken.constructor.name == 'Token')
             return curToken
         switch curToken.type
-            when 'Integer' then \
-                return new createAstConst curToken
-            when 'Name' or 'Symbol' then \
-                return new createAstVar curToken
+            when 'NUMBER' then \
+                return new AST.Const curToken
+            when 'NAME' or 'SYMBOL' then \
+                return new AST.Var curToken
     minPres = 9
     minPresIdx = 0
     for curToken, i in tokenStream
-        if curToken.type not in ['White Space', 'Newline']
+        if curToken.type not in ['WHITE SPACE', 'NEWLINE']
             if curToken.pres <= minPres
                 minPres = curToken.pres
                 minPresIdx = i
@@ -61,8 +61,8 @@ PrattParser = (tokenStream) ->
     tokenStreamR = tokenStream.slice minPresIdx + 1
     astL = PrattParser tokenStreamL
     astR = PrattParser tokenStreamR
-    operator = new createAstVar tokenStream[minPresIdx]
-    return new createAstApp operator, astL, astR
+    operator = new AST.Var tokenStream[minPresIdx]
+    return new AST.App operator, astL, astR
 
 preParse = (tokenStream) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -76,7 +76,7 @@ preParse = (tokenStream) ->
     operator = false  # false: Haven't found an operator | true: Have found an operator
     parens = false  # false: Not inside of parens | true: parsing inside of parens       parens :: ()
     for curToken, i in tokenStream
-        if curToken.type != 'White Space' and curToken.type != 'Newline'
+        if curToken.type != 'WHITE SPACE' and curToken.type != 'NEWLINE'
             if parens
                 if curToken.body == ')' and i == endP
                     parens = false
@@ -101,7 +101,7 @@ preParse = (tokenStream) ->
                 operator = true
                 if curToken.body == '-' and (not tokenStream[i - 1] or not isOperand tokenStream[i - 1])
                     {column, row} = curToken
-                    res.push(new Token 0, column-1, row, 'Integer')
+                    res.push(new Token.Token 0, column-1, row, 'NUMBER')
                     res.push(curToken)
                     operator = false
                 else if not isOperand curToken
@@ -114,7 +114,7 @@ preParse = (tokenStream) ->
                 if isOperand(curToken)
                     fn = PrattParser [res.pop()]
                     arg = PrattParser [curToken]
-                    res.push(new createAstApp fn, arg)
+                    res.push(new AST.App fn, arg)
                     operator = true
                 else
                     res.push curToken
@@ -138,16 +138,16 @@ preParse = (tokenStream) ->
             name = ''
             backwards = tokenStream[...i].reverse()
             for e, j in backwards
-                if e.type != 'White Space' and e.body != ':'
+                if e.type != 'WHITE SPACE' and e.body != ':'
                     if not backwards[j+1] or not backwards[j+2] or \
-                       backwards[j+1].type == 'Newline' or backwards[j+2].type == 'Newline'
+                       backwards[j+1].type == 'NEWLINE' or backwards[j+2].type == 'NEWLINE'
                         name = e
                         break
                     if backwards[j+1].body == ':' or backwards[j+2].body == ':'
                         args.unshift(e)
                     else
                         args.unshift(e)
-                        if backwards[j+1].type == 'White Space'
+                        if backwards[j+1].type == 'WHITE SPACE'
                             name = backwards[j+2]
                         else
                             name = backwards[j+1]
@@ -155,9 +155,9 @@ preParse = (tokenStream) ->
 
             idx = -1
             for endToken, j in tokenStream[(i+1)..]
-                if endToken.type == 'Newline'
+                if endToken.type == 'NEWLINE'
                     if tokenStream[j+i+2]
-                        if tokenStream[j+i+2].type != 'White Space'
+                        if tokenStream[j+i+2].type != 'WHITESPACE'
                             idx = j + i + 1
                             break
                     else
@@ -167,7 +167,12 @@ preParse = (tokenStream) ->
             retAst = PrattParser(preParse body)
 
             if args.length > 0
-                retAst = new ASTLambda retAst, args...
+                retAst = new AST.Lambda retAst, args...
 
-            defArr.push(new createAstDef name, retAst)
-    createDefs(defArr)
+            window.envP = (new AST.Def name, retAst, window.envP).eval window.envP
+#    e = window.envP
+#    while e != null
+#        e.val.e = window.envP
+#        e = e.parent
+
+    return

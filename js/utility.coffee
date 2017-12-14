@@ -4,7 +4,76 @@
     * This file contains what would be "static" utility functions
     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
-@isInt = (value) ->
+special = ['(', ')', ',', ';', '[', ']', '`', '{', '}']
+
+symbol = []  # . !! ^ ^^ ** * / + - : ++ == /= < <= > >= && || >> >>= $ $!
+
+period = {symbol: '.', pres: 9, assoc: 'r'}
+symbol.push period
+
+carrot = {symbol: "^", pres: 8, assoc: "r"};symbol.push carrot
+
+doubleCarrot = {symbol: "^^", pres: 8, assoc: "r"};
+symbol.push doubleCarrot
+
+doubleStar = {symbol: "**", pres: 8, assoc: "r"};
+symbol.push doubleStar
+
+star = {symbol: "*", pres: 7, assoc: "l"};
+symbol.push star
+
+slash = {symbol: "/", pres: 7, assoc: "l"};
+symbol.push slash
+
+plus = {symbol: "+", pres: 6, assoc: "l"};
+symbol.push plus
+
+minus = {symbol: "-", pres: 6, assoc: "l"};
+symbol.push minus
+
+colon = {symbol: ":", pres: 5, assoc: "r"};
+symbol.push colon
+
+doubleEquals = {symbol: "==", pres: 4, assoc: "n"};
+symbol.push doubleEquals
+
+divEqual = {symbol: "/=", pres: 4, assoc: "n"};
+symbol.push divEqual
+
+lessThan = {symbol: "<", pres: 4, assoc: "n"};
+symbol.push lessThan
+
+lessThanEqual = {symbol: "<=", pres: 4, assoc: "n"};
+symbol.push lessThanEqual
+
+greatEqual = {symbol: ">=", pres: 4, assoc: "n"};
+symbol.push greatEqual
+
+greater = {symbol: ">", pres: 4, assoc: "n"};
+symbol.push greater
+
+andAnd = {symbol: "&&", pres: 3, assoc: "r"};
+symbol.push andAnd
+
+orOr = {symbol: "||", pres: 2, assoc: "r"};
+symbol.push orOr
+
+greatGreat = {symbol: ">>", pres: 1, assoc: "l"};
+symbol.push greatGreat
+
+greatGreatEqual = {symbol: ">>=", pres: 1, assoc: "l"};
+symbol.push greatGreatEqual
+
+equalLessLess = {symbol: "=<<", pres: 1, assoc: "r"};
+symbol.push equalLessLess
+
+money = {symbol: "$", pres: 0, assoc: "r"};
+symbol.push money
+
+moneyExclam = {symbol: "$!", pres: 0, assoc: "r"};
+symbol.push moneyExclam
+
+isInt = (value) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isInt(String value)
         * ----------------
@@ -13,7 +82,7 @@
     c = value.charCodeAt 0
     return 48 <= c <= 57;
 
-@sBuiltInFunc = (char) ->
+isBuiltInFunc = (char) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isBuiltInFunc(String value)
         * ----------------
@@ -24,7 +93,7 @@
         console.log char + ' is a built in function'
     return
 
-@isSpecial = (value) ->
+isSpecial = (value) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSpecial(String value)
         * ----------------
@@ -35,7 +104,7 @@
             return true
     return false
 
-@isSymbol = (value) ->
+isSymbol = (value) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSymbol(String value)
         * ----------------
@@ -46,7 +115,7 @@
             return true
     return false
 
-@isLetter = (value) ->
+isLetter = (value) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isLetter(String value)
         * ----------------
@@ -56,7 +125,7 @@
     c = value.charCodeAt 0
     return 65 <= c <= 90 or 97 <= c <= 122 or c == 95
 
-@isWhiteSpace = (value) ->
+isWhiteSpace = (value) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isWhiteSpace(String value)
         * ----------------
@@ -65,7 +134,7 @@
     c = value.charCodeAt 0
     return c == 32
 
-@getLineBreaks = (text) ->
+getLineBreaks = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getLineBreaks(String text)
         * ----------------
@@ -73,7 +142,7 @@
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     return ((text.match /\n/g) or []).length
 
-@splitByLine = (text) ->
+splitByLine = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * splitByLine(String text)
         * ----------------
@@ -85,7 +154,7 @@
 #        ret.push s
 #    return ret
 
-@checkComment = (text) ->
+checkComment = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkComment(String text)
         * ----------------
@@ -93,27 +162,7 @@
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
     return text.length >= 2 and (text.substring 0, 2) == '--'
 
-@cleanWhiteSpace = (tokenStream) ->
-    ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        * cleanWhiteSpace(TokenStream tokenStream)
-        * ----------------
-        * Makes redundant whitespace types into one whitespace from the TokenStream
-        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
-    res = []
-    for i in [0..tokenStream.length - 1] by 1
-        t1 = tokenStream[i]
-        t2 = tokenStream[i+1]
-        if t1.type == 'White Space' and t2.type == 'White Space'
-            body = t1.body + t2.body
-            nt = new Token body, t1.column, t1.row, 'White Space'
-            res.push nt
-        else
-            res.push t1
-        if i == tokenStream.length-2
-            res.push t2
-    return res
-
-@getPres = (text) ->
+getPres = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getPres (String text)
         * ----------------
@@ -124,7 +173,7 @@
             return s.pres
     return undefined
 
-@getAssoc = (text) ->
+getAssoc = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getAssoc (String text)
         * ----------------
@@ -135,12 +184,11 @@
             return s.assoc
     return undefined
 
-@getArrRange = (start, end, array) ->
-#    throw 'Use array.slice(start, end)\n'
+getArrRange = (start, end, array) ->
     console.trace()
     throw 'Use array.slice(start, end)\n'
 
-@checkName = (text) ->
+checkName = (text) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkName (String text)
         * ----------------
@@ -152,6 +200,19 @@
         if isSymbol(ch)
             return false
     return true
+
+@Utility = {
+    splitByLine: splitByLine,
+    isInt: isInt,
+    isSpecial: isSpecial,
+    isSymbol: isSymbol,
+    isLetter: isLetter,
+    isWhiteSpace: isWhiteSpace,
+    checkComment: checkComment,
+    getPres: getPres,
+    getAssoc: getAssoc
+}
+
 
 String::splitWithIndex = (delim) ->
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

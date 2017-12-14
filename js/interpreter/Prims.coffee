@@ -1,17 +1,17 @@
 seq = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return new createMusValue (Seq fmv, smv)
+    return new Value.Mus (Music.Seq fmv, smv)
 
 par = (fm, sm) ->
     fmv = fm.asMusic()
     smv = sm.asMusic()
-    return new createMusValue (Par fmv, smv)
+    return new Value.Mus (Music.Par fmv, smv)
 
 
 modifyInst = (m, inst) ->
     mv = m.asMusic()
-    return new createMusValue (mv.modInst inst)
+    return new Value.Mus (mv.modInst inst)
 
 pianoF = (m) ->
     return modifyInst m, 'acoustic_grand_piano'
@@ -25,7 +25,7 @@ violinF = (m) ->
 
 modifyDur = (m, dur) ->
     mv = m.asMusic()
-    return new createMusValue (mv.modDur dur)
+    return new Value.Mus (mv.modDur dur)
 
 halfF = (m) ->
     return modifyDur m, .5
@@ -42,7 +42,7 @@ sixteenthF = (m) ->
 
 modifyPitch = (m, p) ->
     mv = m.asMusic()
-    return new createMusValue (mv.modPitch p)
+    return new Value.Mus (mv.modPitch p)
 
 pitchUpF = (m) ->
     return modifyPitch m, 2
@@ -53,7 +53,7 @@ pitchDownF = (m) ->
 
 newDyn = (m, d) ->
     mv = m.asMusic()
-    return new createMusValue (mv.newVel d)
+    return new Value.Mus (mv.newVel d)
 
 dynPF = (m) ->
     return newDyn m, 25
@@ -72,7 +72,7 @@ dynFfF = (m) ->
 
 modifyDyn = (m, d) ->
     mv = m.asMusiic()
-    return new createMusValue (mv.modVel d)
+    return new Value.Mus (mv.modVel d)
 
 dynUpF = (m) ->
     return modifyDyn m, 2
@@ -80,48 +80,72 @@ dynUpF = (m) ->
 dynDownF = (m) ->
     return modifyDyn m, .5
 
-
-#@prims = {'+': seq, \
-#          '*': par, \
-#          'piano': pianoF, \
-#          'marimba': marimbaF, \
-#          'violin': violinF, \
-#          'h': halfF, \
-#          'q': quarterF, \
-#          'e': eighthF, \
-#          's': sixteenthF, \
-#          'pUp': pitchUpF, \
-#          'pDown': pitchDownF, \
-#          'dynP': dynPF, \
-#          'dynMp': dynMpF, \
-#          'dynMf': dynMfF, \
-#          'dynF': dynFF, \
-#          'dynFf': dynFfF, \
-#          'dynUp': dynUpF, \
-#          'dynDown': dynDownF}
+prims =
+    '+': seq,
+    '*': par,
+    'piano': pianoF,
+    'marimba': marimbaF,
+    'violin': violinF,
+    'h': halfF,
+    'q': quarterF,
+    'e': eighthF,
+    's': sixteenthF,
+    'pUp': pitchUpF,
+    'pDown': pitchDownF,
+    'dynP': dynPF,
+    'dynMp': dynMpF,
+    'dynMf': dynMfF,
+    'dynF': dynFF,
+    'dynFf': dynFfF,
+    'dynUp': dynUpF,
+    'dynDown': dynDownF
 
 
 plusF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return new createNumValue xv+yv
+    return new Value.Const xv+yv
 
 minusF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return new createNumValue xv-yv
+    return new Value.Const xv-yv
 
 mulF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return new createNumValue xv*yv
+    return new Value.Const xv*yv
 
 divF = (x, y) ->
     xv = x.asNum()
     yv = y.asNum()
-    return new createNumValue xv/yv
+    return new Value.Const xv/yv
 
-@prims = {'+': plusF, \
-          '-': minusF, \
-          '*': mulF, \
-          '/': divF}
+prims =
+    '+': plusF,
+    '-': minusF,
+    '*': mulF,
+    '/': divF
+
+
+envP = null
+
+for name, fn of prims
+    fnV = new Value.FunP fn.length, fn
+    envP = new Env.Env name, (new Env.Thunk fnV), envP
+
+notes =
+    'c3': 36,
+    'd3': 38,
+    'e3': 40,
+    'f3': 41,
+    'g3': 43,
+    'a4': 45,
+    'b4': 47,
+    'c4': 48
+
+for name, note of notes
+    mv = new Value.Mus (new Music.Note 'acoustic_grad_piano', note, 100, 1)
+    envP = new Env.Env name, (new Env.Thunk mv), envP
+
+@envP = envP

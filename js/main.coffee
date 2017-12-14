@@ -30,15 +30,20 @@ $(document).ready -> # Wait for page to load to run JavaScript
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
         # First step is to split into an array based on line breaks
-        input = splitByLine input
-#        console.log input
-        tokenStream = tokenize input
-#        console.log tokenStream
+        input = Utility.splitByLine input
+        tokenStream = Token.tokenize input
         parser tokenStream
-#        console.log envP
-        console.log envP.eval new Token 'x'
-        console.log envP.eval new Token 'y'
-        console.log envP.eval new Token 'z'
+
+        e = window.envP
+        names = []
+        out = ''
+        while e.name != 'c4'
+            if e.name not in names
+                names.push(e.name)
+                t = window.envP.eval new Token.Token e.name
+                out += e.name + ': ' + (window.envP.eval new Token.Token e.name) + '\n'
+            e = e.parent
+        $('#output').val out
         return
 
     # Function Calls * Called when page loads
@@ -72,7 +77,7 @@ $(document).ready -> # Wait for page to load to run JavaScript
 #                    (new Note "alto_sax", 40, 60, 2), \
 #                    (new Note "alto_sax", 80, 40, 5)), \
 #                (new Note "flute", 50, 40, 1)))
-        midiStuff = new Seq (new Note 'flute', 60, 40, 2), (new Note 'alto_sax', 60, 40, 2)
+#        midiStuff = new Seq (new Note 'flute', 60, 40, 2), (new Note 'alto_sax', 60, 40, 2)
         #Loading MIDI plugin
         MIDI.loadPlugin
             soundfontUrl: './Resources/MIDI.js-master/soundfont/'

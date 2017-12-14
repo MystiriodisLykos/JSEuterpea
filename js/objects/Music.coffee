@@ -4,7 +4,7 @@
     * Contains the information for Note, Seq, and Parallel classes
     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ###
 
-class @Note
+class Note
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Note
         * ----------------
@@ -225,7 +225,7 @@ class @Note
         return
 
 
-class @Seq
+class Seq
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Seq
         * ----------------
@@ -308,7 +308,7 @@ class @Seq
         return
 
 
-class @Para
+class Para
     ### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * Para
         * ----------------
@@ -387,3 +387,10 @@ class @Para
         funct1.call @firstMusic, args
         funct2.call @secondMusic, args
         return
+
+
+@Music = {
+    Note: Note,
+    Seq: Seq,
+    Para: Para
+}

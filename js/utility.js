@@ -8,7 +8,189 @@
  */
 
 (function() {
-  this.isInt = function(value) {
+  var andAnd, carrot, checkComment, checkName, colon, divEqual, doubleCarrot, doubleEquals, doubleStar, equalLessLess, getArrRange, getAssoc, getLineBreaks, getPres, greatEqual, greatGreat, greatGreatEqual, greater, isBuiltInFunc, isInt, isLetter, isSpecial, isSymbol, isWhiteSpace, lessThan, lessThanEqual, minus, money, moneyExclam, orOr, period, plus, slash, special, splitByLine, star, symbol;
+
+  special = ['(', ')', ',', ';', '[', ']', '`', '{', '}'];
+
+  symbol = [];
+
+  period = {
+    symbol: '.',
+    pres: 9,
+    assoc: 'r'
+  };
+
+  symbol.push(period);
+
+  carrot = {
+    symbol: "^",
+    pres: 8,
+    assoc: "r"
+  };
+
+  symbol.push(carrot);
+
+  doubleCarrot = {
+    symbol: "^^",
+    pres: 8,
+    assoc: "r"
+  };
+
+  symbol.push(doubleCarrot);
+
+  doubleStar = {
+    symbol: "**",
+    pres: 8,
+    assoc: "r"
+  };
+
+  symbol.push(doubleStar);
+
+  star = {
+    symbol: "*",
+    pres: 7,
+    assoc: "l"
+  };
+
+  symbol.push(star);
+
+  slash = {
+    symbol: "/",
+    pres: 7,
+    assoc: "l"
+  };
+
+  symbol.push(slash);
+
+  plus = {
+    symbol: "+",
+    pres: 6,
+    assoc: "l"
+  };
+
+  symbol.push(plus);
+
+  minus = {
+    symbol: "-",
+    pres: 6,
+    assoc: "l"
+  };
+
+  symbol.push(minus);
+
+  colon = {
+    symbol: ":",
+    pres: 5,
+    assoc: "r"
+  };
+
+  symbol.push(colon);
+
+  doubleEquals = {
+    symbol: "==",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(doubleEquals);
+
+  divEqual = {
+    symbol: "/=",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(divEqual);
+
+  lessThan = {
+    symbol: "<",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(lessThan);
+
+  lessThanEqual = {
+    symbol: "<=",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(lessThanEqual);
+
+  greatEqual = {
+    symbol: ">=",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(greatEqual);
+
+  greater = {
+    symbol: ">",
+    pres: 4,
+    assoc: "n"
+  };
+
+  symbol.push(greater);
+
+  andAnd = {
+    symbol: "&&",
+    pres: 3,
+    assoc: "r"
+  };
+
+  symbol.push(andAnd);
+
+  orOr = {
+    symbol: "||",
+    pres: 2,
+    assoc: "r"
+  };
+
+  symbol.push(orOr);
+
+  greatGreat = {
+    symbol: ">>",
+    pres: 1,
+    assoc: "l"
+  };
+
+  symbol.push(greatGreat);
+
+  greatGreatEqual = {
+    symbol: ">>=",
+    pres: 1,
+    assoc: "l"
+  };
+
+  symbol.push(greatGreatEqual);
+
+  equalLessLess = {
+    symbol: "=<<",
+    pres: 1,
+    assoc: "r"
+  };
+
+  symbol.push(equalLessLess);
+
+  money = {
+    symbol: "$",
+    pres: 0,
+    assoc: "r"
+  };
+
+  symbol.push(money);
+
+  moneyExclam = {
+    symbol: "$!",
+    pres: 0,
+    assoc: "r"
+  };
+
+  symbol.push(moneyExclam);
+
+  isInt = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isInt(String value)
@@ -21,7 +203,7 @@
     return (48 <= c && c <= 57);
   };
 
-  this.sBuiltInFunc = function(char) {
+  isBuiltInFunc = function(char) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isBuiltInFunc(String value)
@@ -35,7 +217,7 @@
     }
   };
 
-  this.isSpecial = function(value) {
+  isSpecial = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSpecial(String value)
@@ -43,9 +225,9 @@
         * This function takes a string and determines if it is a special character
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, sc;
-    for (j = 0, len = special.length; j < len; j++) {
-      sc = special[j];
+    var i, len, sc;
+    for (i = 0, len = special.length; i < len; i++) {
+      sc = special[i];
       if (sc === value) {
         return true;
       }
@@ -53,7 +235,7 @@
     return false;
   };
 
-  this.isSymbol = function(value) {
+  isSymbol = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isSymbol(String value)
@@ -61,9 +243,9 @@
         * This function takes a string and determines if it is a symbol
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var i, len, s;
+    for (i = 0, len = symbol.length; i < len; i++) {
+      s = symbol[i];
       if (s.symbol === value) {
         return true;
       }
@@ -71,7 +253,7 @@
     return false;
   };
 
-  this.isLetter = function(value) {
+  isLetter = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isLetter(String value)
@@ -85,7 +267,7 @@
     return (65 <= c && c <= 90) || (97 <= c && c <= 122) || c === 95;
   };
 
-  this.isWhiteSpace = function(value) {
+  isWhiteSpace = function(value) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * isWhiteSpace(String value)
@@ -98,7 +280,7 @@
     return c === 32;
   };
 
-  this.getLineBreaks = function(text) {
+  getLineBreaks = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getLineBreaks(String text)
@@ -109,7 +291,7 @@
     return ((text.match(/\n/g)) || []).length;
   };
 
-  this.splitByLine = function(text) {
+  splitByLine = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * splitByLine(String text)
@@ -120,7 +302,7 @@
     return text.splitWithIndex('\n');
   };
 
-  this.checkComment = function(text) {
+  checkComment = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkComment(String text)
@@ -131,34 +313,7 @@
     return text.length >= 2 && (text.substring(0, 2)) === '--';
   };
 
-  this.cleanWhiteSpace = function(tokenStream) {
-
-    /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        * cleanWhiteSpace(TokenStream tokenStream)
-        * ----------------
-        * Makes redundant whitespace types into one whitespace from the TokenStream
-        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-     */
-    var body, i, j, nt, ref, res, t1, t2;
-    res = [];
-    for (i = j = 0, ref = tokenStream.length - 1; j <= ref; i = j += 1) {
-      t1 = tokenStream[i];
-      t2 = tokenStream[i + 1];
-      if (t1.type === 'White Space' && t2.type === 'White Space') {
-        body = t1.body + t2.body;
-        nt = new Token(body, t1.column, t1.row, 'White Space');
-        res.push(nt);
-      } else {
-        res.push(t1);
-      }
-      if (i === tokenStream.length - 2) {
-        res.push(t2);
-      }
-    }
-    return res;
-  };
-
-  this.getPres = function(text) {
+  getPres = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getPres (String text)
@@ -166,9 +321,9 @@
         * Gets the president of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var i, len, s;
+    for (i = 0, len = symbol.length; i < len; i++) {
+      s = symbol[i];
       if (text === s.symbol) {
         return s.pres;
       }
@@ -176,7 +331,7 @@
     return void 0;
   };
 
-  this.getAssoc = function(text) {
+  getAssoc = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * getAssoc (String text)
@@ -184,9 +339,9 @@
         * Gets the association of a particular text
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var j, len, s;
-    for (j = 0, len = symbol.length; j < len; j++) {
-      s = symbol[j];
+    var i, len, s;
+    for (i = 0, len = symbol.length; i < len; i++) {
+      s = symbol[i];
       if (text === s.symbol) {
         return s.assoc;
       }
@@ -194,12 +349,12 @@
     return void 0;
   };
 
-  this.getArrRange = function(start, end, array) {
+  getArrRange = function(start, end, array) {
     console.trace();
     throw 'Use array.slice(start, end)\n';
   };
 
-  this.checkName = function(text) {
+  checkName = function(text) {
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         * checkName (String text)
@@ -207,17 +362,29 @@
         * Checks if text is a valid variable name
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var ch, j, len;
+    var ch, i, len;
     if (isInt(text[0])) {
       return false;
     }
-    for (j = 0, len = text.length; j < len; j++) {
-      ch = text[j];
+    for (i = 0, len = text.length; i < len; i++) {
+      ch = text[i];
       if (isSymbol(ch)) {
         return false;
       }
     }
     return true;
+  };
+
+  this.Utility = {
+    splitByLine: splitByLine,
+    isInt: isInt,
+    isSpecial: isSpecial,
+    isSymbol: isSymbol,
+    isLetter: isLetter,
+    isWhiteSpace: isWhiteSpace,
+    checkComment: checkComment,
+    getPres: getPres,
+    getAssoc: getAssoc
   };
 
   String.prototype.splitWithIndex = function(delim) {
@@ -230,12 +397,12 @@
         * are the indices of the original string the split is at
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      */
-    var index, j, len, res, s, splits;
+    var i, index, len, res, s, splits;
     res = [];
     splits = this.split(delim);
     index = 0;
-    for (j = 0, len = splits.length; j < len; j++) {
-      s = splits[j];
+    for (i = 0, len = splits.length; i < len; i++) {
+      s = splits[i];
       res.push([index, s]);
       index += s.length + delim.length;
     }
